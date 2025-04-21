@@ -1,23 +1,29 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class LoginController extends GetxController {
-  //TODO: Implement LoginController
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  var isPasswordHidden = true.obs;
 
-  final count = 0.obs;
-  @override
-  void onInit() {
-    super.onInit();
+  void togglePasswordVisibility() {
+    isPasswordHidden.value = !isPasswordHidden.value;
   }
 
-  @override
-  void onReady() {
-    super.onReady();
+  void login() {
+    // Logika login kamu di sini
+    final email = emailController.text;
+    final password = passwordController.text;
+
+    print('Email: $email, Password: $password');
+
+    // Bisa tambahkan validasi, panggil API, dll
   }
 
   @override
   void onClose() {
+    emailController.dispose();
+    passwordController.dispose();
     super.onClose();
   }
-
-  void increment() => count.value++;
 }

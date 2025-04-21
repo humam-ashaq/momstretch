@@ -6,6 +6,6 @@ class SplashBinding extends Bindings {
   @override
   void dependencies() {
     print('[SPLASH] Binding running');
-    Get.lazyPut<SplashController>(() => SplashController());
+    Get.put(SplashController());
   }
 }

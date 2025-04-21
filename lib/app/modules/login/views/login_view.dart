@@ -120,12 +120,19 @@ class LoginView extends GetView<LoginController> {
                       },
                       child: RichText(
                         text: TextSpan(
-                          style: TextStyle(fontSize: 12, color: mainColor),
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: mainColor
+                          ),
                           children: [
-                            TextSpan(text: 'Belum punya akun? '),
+                            TextSpan(
+                              text: 'Belum punya akun? '
+                            ),
                             TextSpan(
                               text: 'Daftar',
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold
+                              ),
                             ),
                           ],
                         ),
@@ -137,7 +144,10 @@ class LoginView extends GetView<LoginController> {
               const SizedBox(height: 20),
               Center(
                 child: ElevatedButton(
-                  onPressed: controller.login,
+                  onPressed: () {
+                    Get.toNamed('/program');
+                  },
+                  // controller.login,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: mainColor,
                     minimumSize: Size(double.infinity, 50),

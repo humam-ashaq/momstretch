@@ -32,21 +32,11 @@ class RegisterView extends GetView<RegisterController> {
                       color: Colors.amber[700],
                     ),
                   ),
-                  GestureDetector(
-                    onTap: () => Get.toNamed('/login'),
-                    child: Text(
-                      'Log In',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: mainColor,
-                      ),
-                    ),
-                  ),
                 ],
               ),
               const SizedBox(height: 40),
               Text(
-                'Create Account',
+                'Daftar',
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.w500,
@@ -56,29 +46,55 @@ class RegisterView extends GetView<RegisterController> {
               const SizedBox(height: 24),
               Text('Nama Pengguna', style: labelStyle(mainColor)),
               const SizedBox(height: 8),
-              inputField(controller.nameController, 'Enter your name'),
+              inputField(controller.nameController, 'Masukan nama anda'),
               const SizedBox(height: 16),
               Text('Email', style: labelStyle(mainColor)),
               const SizedBox(height: 8),
-              inputField(controller.emailController, 'Enter your email'),
+              inputField(controller.emailController, 'Masukan alamat email anda'),
               const SizedBox(height: 16),
-              Text('Password', style: labelStyle(mainColor)),
+              Text('Kata Sandi', style: labelStyle(mainColor)),
               const SizedBox(height: 8),
               Obx(() => passwordField(
                     controller.passwordController,
-                    'Enter your password',
+                    'Masukan kata sandi anda',
                     controller.isPasswordHidden,
                     controller.togglePasswordVisibility,
                   )),
               const SizedBox(height: 16),
-              Text('Confirm password', style: labelStyle(mainColor)),
+              Text('Konfirmasi kata sandi', style: labelStyle(mainColor)),
               const SizedBox(height: 8),
               Obx(() => passwordField(
                     controller.confirmPasswordController,
-                    'Confirm password',
+                    'Masukan ulang kata sandi anda',
                     controller.isConfirmPasswordHidden,
                     controller.toggleConfirmPasswordVisibility,
                   )),
+              const SizedBox(height: 8),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () {
+                    Get.toNamed('/login');
+                  },
+                  child: RichText(
+                    text: TextSpan(
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: mainColor
+                      ),
+                      children: [
+                        TextSpan(
+                          text: 'Sudah punya akun? '
+                        ),
+                        TextSpan(
+                          text: 'Masuk',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold
+                          )
+                        )
+                      ]
+                    )),),
+              ),
               const SizedBox(height: 24),
               Center(
                 child: ElevatedButton(
@@ -95,6 +111,7 @@ class RegisterView extends GetView<RegisterController> {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
+                      color: Colors.white
                     ),
                   ),
                 ),

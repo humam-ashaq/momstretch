@@ -12,12 +12,26 @@ class ProgramView extends GetView<ProgramController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Center(
+                child: Text(
+                  'MOMSTRETCH+',
+                  style: TextStyle(
+                    letterSpacing: 2,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: Colors.amber[700],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24,),
               const Center(
                 child: Text(
                   'Program Stretching',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
               ),
+              const SizedBox(height: 12,),
+              Image.asset('assets/images/pilihprogram.png'),
               const SizedBox(height: 24),
               const Text("Mari mulai dengan menentukan\nProgram Stretching"),
               const SizedBox(height: 12),

@@ -8,6 +8,7 @@ void main() async {
   runApp(
     GetMaterialApp(
       title: "MomStretch+",
+      debugShowCheckedModeBanner: false,
       initialRoute: AppPages.INITIAL,
       getPages: AppPages.routes,
     ),

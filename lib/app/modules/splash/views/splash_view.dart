@@ -1,29 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/splash_controller.dart';
-import 'package:flutter_svg/svg.dart';
 
 class SplashView extends GetView<SplashController> {
-  const SplashView({super.key});
+  const SplashView({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('SplashView'),
-        centerTitle: true,
-      ),
       body: Container(
-        color: Color(0xFF926F6D),
-        child: Column(
-          children: [
-            SvgPicture.asset(
-              'assets/images/logo.svg',
-              width: 64,
-              height: 64,
-            ),
-            SizedBox(height: 64,),
-            CircularProgressIndicator()
-          ],
+        width: double.infinity, // Supaya lebar penuh
+        height: double.infinity, // Supaya tinggi penuh
+        color: const Color(0xFF926F6D),
+        child: FadeTransition(
+          opacity: controller.fadeAnimation,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center, // Tengah vertikal
+            crossAxisAlignment: CrossAxisAlignment.center, // Tengah horizontal
+            children: [
+              Image.asset(
+                'assets/images/logo.png',
+                width: 300,
+                height: 300,
+              ),
+              const SizedBox(height: 64),
+              const CircularProgressIndicator(color: Colors.white),
+            ],
+          ),
         ),
       ),
     );

@@ -23,14 +23,18 @@ class ProgramView extends GetView<ProgramController> {
                   ),
                 ),
               ),
-              const SizedBox(height: 24,),
+              const SizedBox(
+                height: 24,
+              ),
               const Center(
                 child: Text(
                   'Program Stretching',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
               ),
-              const SizedBox(height: 12,),
+              const SizedBox(
+                height: 12,
+              ),
               Image.asset('assets/images/pilihprogram.png'),
               const SizedBox(height: 24),
               const Text("Mari mulai dengan menentukan\nProgram Stretching"),
@@ -39,8 +43,8 @@ class ProgramView extends GetView<ProgramController> {
                     value: controller.selectedProgram.value,
                     decoration: InputDecoration(
                       hintText: "Pilih Program Stretching",
-                      border:
-                          OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12)),
                     ),
                     items: controller.programList.map((program) {
                       return DropdownMenuItem(
@@ -56,7 +60,8 @@ class ProgramView extends GetView<ProgramController> {
               TextField(
                 decoration: InputDecoration(
                   labelText: "Usia",
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12)),
                 ),
                 keyboardType: TextInputType.number,
               ),
@@ -69,8 +74,8 @@ class ProgramView extends GetView<ProgramController> {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF52463B),
-                    shape:
-                        RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30)),
                     padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
                   child: const Text(

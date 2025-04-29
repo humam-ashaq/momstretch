@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mom_stretch/app/data/app_colors.dart';
 import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
@@ -29,7 +30,7 @@ class HomeView extends GetView<HomeController> {
                     Icon(
                       Icons.account_circle,
                       size: 30,
-                      color: Color.fromARGB(1000, 87, 76, 64),
+                      color: AppColors.primaryColor,
                     ),
                     Text(
                       'MOMSTRETCH+',
@@ -50,7 +51,8 @@ class HomeView extends GetView<HomeController> {
                 ),
               ),
             ),
-          )),
+          )
+        ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(

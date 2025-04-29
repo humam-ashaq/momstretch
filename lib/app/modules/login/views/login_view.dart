@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/login_controller.dart';
+import '../../../data/app_colors.dart';
 
 class LoginView extends GetView<LoginController> {
   @override
   Widget build(BuildContext context) {
-    final mainColor = Color(0xFF52463D);
+    final mainColor = AppColors.primaryColor;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -23,10 +24,11 @@ class LoginView extends GetView<LoginController> {
                   Text(
                     'MOMSTRETCH+',
                     style: TextStyle(
+                      fontFamily: 'HammersmithOne',
                       letterSpacing: 2,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                      color: Colors.amber[700],
+                      fontWeight: FontWeight.normal,
+                      fontSize: 20,
+                      color: AppColors.secondaryColor
                     ),
                   ),
                 ],

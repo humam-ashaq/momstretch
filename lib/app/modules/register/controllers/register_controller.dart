@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../services/auth_service.dart';
 
 class RegisterController extends GetxController {
-  final nameController = TextEditingController();
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
-  final confirmPasswordController = TextEditingController();
-
+  final emailC = TextEditingController();
+  final passC = TextEditingController();
+  final confPassC = TextEditingController();
+  final nameC = TextEditingController();
+  var isLoading = false.obs;
   var isPasswordHidden = true.obs;
   var isConfirmPasswordHidden = true.obs;
 
@@ -18,27 +19,69 @@ class RegisterController extends GetxController {
     isConfirmPasswordHidden.value = !isConfirmPasswordHidden.value;
   }
 
-  void register() {
-    final name = nameController.text;
-    final email = emailController.text;
-    final pass = passwordController.text;
-    final confirm = confirmPasswordController.text;
-
-    if (pass != confirm) {
-      Get.snackbar("Error", "Password tidak cocok");
+  Future<void> register(String email, String password, String confirmPassword, String nama) async {
+    if (password != confirmPassword) {
+      Get.snackbar('Error', 'Kata sandi dan konfirmasi tidak cocok');
       return;
     }
 
-    print("Registering user: $name, $email");
-    // Tambahkan logika daftar ke backend di sini
+    isLoading.value = true;
+    final result = await AuthService.register(email, password, nama);
+    isLoading.value = false;
+
+    if (result['success']) {
+      Get.snackbar('Sukses', 'Registrasi berhasil, silakan login');
+      await Future.delayed(Duration(milliseconds: 700)); // Tambahkan delay sedikit
+      Get.offNamed('/login'); // balik ke login page
+    } else {
+      Get.snackbar('Error', result['message']);
+    }
   }
 
-  @override
-  void onClose() {
-    nameController.dispose();
-    emailController.dispose();
-    passwordController.dispose();
-    confirmPasswordController.dispose();
-    super.onClose();
+
+  Widget inputField(TextEditingController ctrl, String hint) {
+    return TextField(
+      controller: ctrl,
+      decoration: InputDecoration(
+        hintText: hint,
+        filled: true,
+        fillColor: const Color(0xFFF0EFF6),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20),
+          borderSide: BorderSide.none,
+        ),
+      ),
+    );
+  }
+
+  Widget passwordField(TextEditingController ctrl, String hint,
+      RxBool isHidden, VoidCallback toggle) {
+    return TextField(
+      controller: ctrl,
+      obscureText: isHidden.value,
+      decoration: InputDecoration(
+        hintText: hint,
+        filled: true,
+        fillColor: const Color(0xFFF0EFF6),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        suffixIcon: IconButton(
+          icon: Icon(isHidden.value ? Icons.visibility_off : Icons.visibility),
+          onPressed: toggle,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20),
+          borderSide: BorderSide.none,
+        ),
+      ),
+    );
+  }
+
+  TextStyle labelStyle(Color color) {
+    return TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w500,
+      color: color,
+    );
   }
 }

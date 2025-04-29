@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../services/auth_service.dart';
+import '../../../data/widgets/custom_snackbar.dart';
 
 class RegisterController extends GetxController {
   final emailC = TextEditingController();
@@ -19,9 +20,11 @@ class RegisterController extends GetxController {
     isConfirmPasswordHidden.value = !isConfirmPasswordHidden.value;
   }
 
-  Future<void> register(String email, String password, String confirmPassword, String nama) async {
+  Future<void> register(String email, String password, String confirmPassword,
+      String nama) async {
     if (password != confirmPassword) {
-      Get.snackbar('Error', 'Kata sandi dan konfirmasi tidak cocok');
+      showCustomSnackbar('Error', 'Kata sandi dan konfirmasi tidak cocok',
+          backgroundColor: Colors.red);
       return;
     }
 
@@ -30,14 +33,16 @@ class RegisterController extends GetxController {
     isLoading.value = false;
 
     if (result['success']) {
-      Get.snackbar('Sukses', 'Registrasi berhasil, silakan login');
-      await Future.delayed(Duration(milliseconds: 700)); // Tambahkan delay sedikit
-      Get.offNamed('/login'); // balik ke login page
+      showCustomSnackbar(
+          'Sukses', 'Registrasi berhasil, mengarahkan ke login...',
+          backgroundColor: Colors.green);
+      await Future.delayed(Duration(seconds: 2));
+      Get.offNamed('/login');
     } else {
-      Get.snackbar('Error', result['message']);
+      showCustomSnackbar('Error', result['message'],
+          backgroundColor: Colors.red);
     }
   }
-
 
   Widget inputField(TextEditingController ctrl, String hint) {
     return TextField(
@@ -46,7 +51,8 @@ class RegisterController extends GetxController {
         hintText: hint,
         filled: true,
         fillColor: const Color(0xFFF0EFF6),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
           borderSide: BorderSide.none,
@@ -55,8 +61,8 @@ class RegisterController extends GetxController {
     );
   }
 
-  Widget passwordField(TextEditingController ctrl, String hint,
-      RxBool isHidden, VoidCallback toggle) {
+  Widget passwordField(TextEditingController ctrl, String hint, RxBool isHidden,
+      VoidCallback toggle) {
     return TextField(
       controller: ctrl,
       obscureText: isHidden.value,
@@ -64,7 +70,8 @@ class RegisterController extends GetxController {
         hintText: hint,
         filled: true,
         fillColor: const Color(0xFFF0EFF6),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         suffixIcon: IconButton(
           icon: Icon(isHidden.value ? Icons.visibility_off : Icons.visibility),
           onPressed: toggle,

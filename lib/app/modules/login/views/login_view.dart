@@ -20,16 +20,18 @@ class LoginView extends GetView<LoginController> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Icon(Icons.arrow_back_ios, size: 24),
+                  IconButton(
+                    icon: Icon(Icons.arrow_back_ios),
+                    onPressed: () => Get.back(),
+                  ),
                   Text(
                     'MOMSTRETCH+',
                     style: TextStyle(
-                      fontFamily: 'HammersmithOne',
-                      letterSpacing: 2,
-                      fontWeight: FontWeight.normal,
-                      fontSize: 20,
-                      color: AppColors.secondaryColor
-                    ),
+                        fontFamily: 'HammersmithOne',
+                        letterSpacing: 2,
+                        fontWeight: FontWeight.normal,
+                        fontSize: 20,
+                        color: AppColors.secondaryColor),
                   ),
                 ],
               ),
@@ -53,7 +55,7 @@ class LoginView extends GetView<LoginController> {
               ),
               const SizedBox(height: 8),
               TextField(
-                controller: controller.emailController,
+                controller: controller.emailC,
                 decoration: InputDecoration(
                   hintText: 'Masukan alamat email anda',
                   filled: true,
@@ -77,7 +79,7 @@ class LoginView extends GetView<LoginController> {
               ),
               const SizedBox(height: 8),
               Obx(() => TextField(
-                    controller: controller.passwordController,
+                    controller: controller.passC,
                     obscureText: controller.isPasswordHidden.value,
                     decoration: InputDecoration(
                       hintText: 'Masukan Kata Sandi',
@@ -97,7 +99,9 @@ class LoginView extends GetView<LoginController> {
                       ),
                     ),
                   )),
-              const SizedBox(height: 8,),
+              const SizedBox(
+                height: 8,
+              ),
               Align(
                 alignment: Alignment.centerRight,
                 child: Row(
@@ -122,19 +126,12 @@ class LoginView extends GetView<LoginController> {
                       },
                       child: RichText(
                         text: TextSpan(
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: mainColor
-                          ),
+                          style: TextStyle(fontSize: 12, color: mainColor),
                           children: [
-                            TextSpan(
-                              text: 'Belum punya akun? '
-                            ),
+                            TextSpan(text: 'Belum punya akun? '),
                             TextSpan(
                               text: 'Daftar',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold
-                              ),
+                              style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
@@ -145,26 +142,34 @@ class LoginView extends GetView<LoginController> {
               ),
               const SizedBox(height: 20),
               Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    Get.toNamed('/program');
-                  },
-                  // controller.login,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: mainColor,
-                    minimumSize: Size(double.infinity, 50),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                  ),
-                  child: Text(
-                    'MASUK',
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white),
-                  ),
-                ),
+                child: Obx(() => ElevatedButton(
+                      onPressed:
+                          controller.isLoading.value ? null : controller.login,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: mainColor,
+                        minimumSize: Size(double.infinity, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
+                      child: controller.isLoading.value
+                          ? const SizedBox(
+                              height: 24,
+                              width: 24,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : const Text(
+                              'MASUK',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                    )),
               )
             ],
           ),

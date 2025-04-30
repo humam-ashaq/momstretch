@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../education/views/education_view.dart';
 import '../../home/views/home_view.dart';
+import '../../mood_check/views/mood_check_view.dart';
 import '../../stretching/views/stretching_view.dart';
 
 class MainController extends GetxController {
@@ -9,7 +10,7 @@ class MainController extends GetxController {
     HomeView(),
     StretchingView(),
     EducationView(),
-    // ProfileView(),
+    MoodCheckView(),
   ];
   var currentIndex = 0.obs;
 

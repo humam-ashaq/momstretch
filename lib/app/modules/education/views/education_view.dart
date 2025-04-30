@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mom_stretch/app/data/app_colors.dart';
 import '../controllers/education_controller.dart';
 
 class EducationView extends GetView<EducationController> {
@@ -20,6 +21,7 @@ class EducationView extends GetView<EducationController> {
                 child: Text(
                   'Edukasi\nKesehatan Ibu',
                   style: TextStyle(
+                    color: AppColors.primaryColor,
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                     height: 1.2,

@@ -1,0 +1,182 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:fl_chart/fl_chart.dart';
+import 'package:mom_stretch/app/data/app_colors.dart';
+import '../controllers/mood_check_controller.dart';
+
+class MoodCheckView extends GetView<MoodCheckController> {
+  const MoodCheckView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(
+                height: 16,
+              ),
+              Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.forthColor,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 16),
+                        const Text(
+                          'Take EPDS test',
+                          style: TextStyle(
+                              fontSize: 22, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 16),
+                        GestureDetector(
+                          onTap: () {
+                            // Arahkan ke halaman test EPDS
+                            Get.toNamed('/epds-test');
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF4E3D30),
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: const [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Take EPDS Test',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    SizedBox(height: 4),
+                                    Text(
+                                      'Deteksi resiko terkena baby blues',
+                                      style: TextStyle(color: Colors.white70),
+                                    ),
+                                  ],
+                                ),
+                                Icon(Icons.arrow_forward_ios,
+                                    color: Colors.white),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        const Text(
+                          'Results',
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 12),
+                        Obx(() => Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'EPDS Score : ${controller.epdsScore.value}',
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(controller.epdsResult),
+                                ],
+                              ),
+                            )),
+                        const SizedBox(height: 24),
+                      ],
+                    ),
+                  )),
+              const SizedBox(
+                height: 16,
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  color: AppColors.forthColor,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 16,),
+                      const Text(
+                        'History',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 12),
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'EPDS Score',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 8),
+                            SizedBox(
+                              height: 150,
+                              child: LineChart(
+                                LineChartData(
+                                  gridData: FlGridData(show: false),
+                                  borderData: FlBorderData(show: false),
+                                  titlesData: FlTitlesData(show: false),
+                                  lineBarsData: [
+                                    LineChartBarData(
+                                      spots: controller.epdsHistory
+                                          .asMap()
+                                          .entries
+                                          .map((e) => FlSpot(
+                                                e.key.toDouble(),
+                                                e.value.toDouble(),
+                                              ))
+                                          .toList(),
+                                      isCurved: true,
+                                      color: const Color(0xFF4E3D30),
+                                      barWidth: 3,
+                                      dotData: FlDotData(show: true),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16,)
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

@@ -8,6 +8,8 @@ import '../modules/login/bindings/login_binding.dart';
 import '../modules/login/views/login_view.dart';
 import '../modules/main/bindings/main_binding.dart';
 import '../modules/main/views/main_view.dart';
+import '../modules/mood_check/bindings/mood_check_binding.dart';
+import '../modules/mood_check/views/mood_check_view.dart';
 import '../modules/profile/bindings/profile_binding.dart';
 import '../modules/profile/views/profile_view.dart';
 import '../modules/program/bindings/program_binding.dart';
@@ -71,6 +73,11 @@ class AppPages {
       name: _Paths.EDUCATION,
       page: () => EducationView(),
       binding: EducationBinding(),
+    ),
+    GetPage(
+      name: _Paths.MOOD_CHECK,
+      page: () => const MoodCheckView(),
+      binding: MoodCheckBinding(),
     ),
   ];
 }

@@ -70,7 +70,7 @@ class ProgramView extends GetView<ProgramController> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    Get.offAllNamed('/home');
+                    Get.offAllNamed('/main');
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF52463B),

@@ -10,49 +10,6 @@ class HomeView extends GetView<HomeController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFFFFFFF),
-      appBar: PreferredSize(
-          preferredSize: Size.fromHeight(60),
-          child: Container(
-            decoration: BoxDecoration(boxShadow: [
-              BoxShadow(
-                color: Colors.black12,
-                offset: const Offset(0, 1),
-                blurRadius: 1,
-                spreadRadius: 1,
-              )
-            ]),
-            child: AppBar(
-              title: Padding(
-                padding: const EdgeInsets.fromLTRB(24.0, 30, 24, 24),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Icon(
-                      Icons.account_circle,
-                      size: 30,
-                      color: AppColors.primaryColor,
-                    ),
-                    Text(
-                      'MOMSTRETCH+',
-                      style: TextStyle(
-                        letterSpacing: 2,
-                        fontFamily: 'HammersmithOne',
-                        fontWeight: FontWeight.normal,
-                        fontSize: 20,
-                        color: Color.fromARGB(1000, 235, 203, 143),
-                      ),
-                    ),
-                    Icon(
-                      Icons.notifications,
-                      size: 30,
-                      color: Color.fromARGB(1000, 87, 76, 64),
-                    ),
-                  ],  
-                ),
-              ),
-            ),
-          )
-        ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -140,21 +97,6 @@ class HomeView extends GetView<HomeController> {
             ),
           ),
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
-        onTap: (index) {
-          // nanti tambahkan navigasi antar halaman
-        },
-        selectedItemColor: const Color(0xFF52463B),
-        unselectedItemColor: Colors.grey,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.accessibility_new), label: ''),
-          BottomNavigationBarItem(icon: Icon(Icons.menu_book), label: ''),
-          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: ''),
-        ],
       ),
     );
   }

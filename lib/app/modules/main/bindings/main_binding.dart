@@ -1,12 +1,17 @@
 import 'package:get/get.dart';
 
+import '../../home/controllers/home_controller.dart';
+import '../../stretching/controllers/stretching_controller.dart';
 import '../controllers/main_controller.dart';
 
 class MainBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<MainController>(
-      () => MainController(),
-    );
+    Get.put(MainController());
+    Get.lazyPut(() => HomeController());
+    Get.lazyPut(() => StretchingController());
+    // Get.lazyPut(() => EdukasiController());
+    // Get.lazyPut(() => CekMoodController());
   }
 }
+

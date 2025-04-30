@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mom_stretch/app/data/app_colors.dart';
 import '../controllers/stretching_controller.dart';
 
 class StretchingView extends GetView<StretchingController> {
@@ -13,36 +14,39 @@ class StretchingView extends GetView<StretchingController> {
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Header
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'MOMSTRETCH+',
-                    style: TextStyle(
-                      letterSpacing: 2,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                      color: Colors.amber[700],
-                    ),
-                  ),
-                  const Icon(Icons.account_circle_outlined, size: 28),
-                ],
-              ),
-              const SizedBox(height: 24),
-
-              const Text(
-                'Make time for cross–training\nThese runner–approved workouts are here …',
+              Text(
+                //nanti ambil dari database
+                'Stretching Pasca Melahirkan',
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
                   color: Colors.black87,
                   height: 1.5,
                 ),
               ),
               const SizedBox(height: 24),
-
+              Obx(() => DropdownButtonFormField<String>(
+                    value: controller.selectedProgram.value,
+                    decoration: InputDecoration(
+                      hintText: "Pilih Program Stretching",
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                    ),
+                    items: controller.programList.map((program) {
+                      return DropdownMenuItem(
+                        value: program,
+                        child: Text(program),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      controller.selectedProgram.value = value;
+                    },
+                  )),
+              const SizedBox(
+                height: 24,
+              ),
               // List of workouts
               Expanded(
                 child: Obx(() => ListView.builder(
@@ -51,69 +55,106 @@ class StretchingView extends GetView<StretchingController> {
                         final item = controller.stretchingList[index];
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 16),
-                          child: Row(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: Image.asset(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Stack(
+                              children: [
+                                // Gambar
+                                Image.asset(
                                   item['image']!,
-                                  width: 100,
-                                  height: 80,
+                                  width: double.infinity,
+                                  height: 200,
                                   fit: BoxFit.cover,
                                 ),
-                              ),
-                              const SizedBox(width: 12),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    item['title']!,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 16,
-                                      color: Colors.brown,
+                                // Overlay gradasi semi transparan (opsional, untuk kontras)
+                                Container(
+                                  width: double.infinity,
+                                  height: 180,
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.bottomCenter,
+                                      end: Alignment.topCenter,
+                                      colors: [
+                                        Colors.black.withOpacity(0.6),
+                                        Colors.transparent,
+                                      ],
                                     ),
                                   ),
-                                  Text(
-                                    '${item['level']} *',
-                                    style: const TextStyle(
-                                      fontSize: 13,
-                                      color: Colors.brown,
+                                ),
+                                // Konten di atas gambar
+                                Positioned.fill(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(12),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          item['title']!,
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Row(
+                                          children: [
+                                            ElevatedButton(
+                                              onPressed: () {
+                                                // Aksi Lihat Detail
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: AppColors.tertiaryColor,
+                                                foregroundColor: AppColors.primaryColor,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 16,
+                                                        vertical: 8),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                              ),
+                                              child: const Text("Lihat Detail"),
+                                            ),
+                                            const SizedBox(width: 12),
+                                            ElevatedButton(
+                                              onPressed: () {
+                                                // Aksi Mulai Gerakan
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Colors.brown,
+                                                foregroundColor: Colors.white,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 16,
+                                                        vertical: 8),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                              ),
+                                              child:
+                                                  const Text("Mulai Gerakan"),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                  Text(
-                                    item['duration']!,
-                                    style: const TextStyle(
-                                      fontSize: 13,
-                                      color: Colors.brown,
-                                    ),
-                                  ),
-                                ],
-                              )
-                            ],
+                                ),
+                              ],
+                            ),
                           ),
                         );
                       },
                     )),
-              )
+              ),
             ],
           ),
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
-        onTap: (index) {
-          // nanti tambahkan navigasi antar halaman
-        },
-        selectedItemColor: const Color(0xFF52463B),
-        unselectedItemColor: Colors.grey,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.accessibility_new), label: ''),
-          BottomNavigationBarItem(icon: Icon(Icons.menu_book), label: ''),
-          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: ''),
-        ],
       ),
     );
   }

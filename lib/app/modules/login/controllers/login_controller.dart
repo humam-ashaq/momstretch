@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../services/auth_service.dart';
 import '../../../data/widgets/custom_snackbar.dart';
+import 'package:get_storage/get_storage.dart';
 
 class LoginController extends GetxController {
   final emailC = TextEditingController();
   final passC = TextEditingController();
   var isPasswordHidden = true.obs;
   var isLoading = false.obs;
+  static final box = GetStorage();
 
   void togglePasswordVisibility() {
     isPasswordHidden.value = !isPasswordHidden.value;
@@ -30,6 +32,9 @@ class LoginController extends GetxController {
     if (result['success']) {
       showCustomSnackbar('Sukses', result['message'],
           backgroundColor: Colors.green);
+      print('Token yang disimpan di box: ${AuthService.box.read('token')}');
+      print('TOKEN YANG DIKIRIM: ${box.read('token')}');
+
       await Future.delayed(Duration(seconds: 1));
       Get.offAllNamed('/program'); // arahkan ke home setelah login
     } else {

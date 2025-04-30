@@ -31,7 +31,7 @@ class LoginView extends GetView<LoginController> {
                         letterSpacing: 2,
                         fontWeight: FontWeight.normal,
                         fontSize: 20,
-                        color: AppColors.secondaryColor),
+                        color: AppColors.tertiaryColor),
                   ),
                 ],
               ),

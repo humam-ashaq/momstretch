@@ -10,146 +10,138 @@ class HomeView extends GetView<HomeController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFFFFFFF),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Greeting + Notification Row
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      body: Stack(
+        children: [
+          SafeArea(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Text(
+                      // nanti ambil dari database
+                      'Welcome, Asihra',
+                      style: TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primaryColor),
+                    ),
+                    SizedBox(
+                      height: 16,
+                    ),
+                    // Greeting + Notification Row
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Halo Mom!\nSiap kembali bugar dan\nbahagia setelah melahirkan?\nYuk Stretching bareng!',
+                              style: TextStyle(fontSize: 14),
+                            ),
+                            const SizedBox(
+                              height: 8,
+                            ),
+                            // Explore Button
+                            ElevatedButton(
+                              onPressed: () {
+                                Get.toNamed('/stretching');
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF52463B),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                              ),
+                              child: const Text(
+                                'Explore Stretching',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        Image.asset(
+                          'assets/images/pilihprogram.png',
+                          height: 100,
+                        )
+                      ],
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    ...controller.articles.map((article) => Padding(
+                          padding: const EdgeInsets.only(bottom: 16.0),
+                          child: controller.buildArticleCard(
+                              article['image']!, article['title']!),
+                        )),
+                    const SizedBox(height: 8),
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: controller.onViewAllPressed,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primaryColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                        child: const Text(
+                          'View All',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 80,)
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            left: 24,
+            right: 24,
+            bottom: 24,
+            child: GestureDetector(
+              onTap: controller.onHealthTestPressed,
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: AppColors.forthColor,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    )
+                  ],
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: const [
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Halo Mom! Ingin Memperoleh\nTubuh Ideal?\nYuk Stretching!',
-                          style: TextStyle(fontSize: 16),
+                          'Health Test',
+                          style: TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        const SizedBox(
-                          height: 8,
-                        ),
-                        // Explore Button
-                        ElevatedButton(
-                          onPressed: () {
-                            Get.toNamed('/stretching');
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF52463B),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                          ),
-                          child: const Text(
-                            'Explore Stretching',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
+                        SizedBox(height: 4),
+                        Text('Detect baby blues with EPDS'),
                       ],
                     ),
-                    Image.asset(
-                      'assets/images/pilihprogram.png',
-                      height: 120,
-                    )
+                    Icon(Icons.arrow_forward_ios, size: 16),
                   ],
                 ),
-
-                const SizedBox(height: 24),
-
-                // Artikel Section
-                articleCard(
-                  image: 'assets/images/berita.png',
-                  title:
-                      'Bunda, Ini yang Terjadi pada Dirimu\nSesudah Melahirkan',
-                ),
-                const SizedBox(height: 16),
-                articleCard(
-                  image: 'assets/images/berita.png',
-                  title: 'Bolehkah Ibu Tidur Siang Setelah\nMelahirkan?',
-                ),
-                const SizedBox(height: 16),
-                articleCard(
-                  image: 'assets/images/berita.png',
-                  title: 'Tips Mengatur Pola Makan Pasca\nPersalinan',
-                ),
-                const SizedBox(height: 24),
-
-                Center(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Get.toNamed('/artikel'); // atau route artikel lainnya
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF52463B),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                    child: const Text(
-                      'View All',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
-        ),
+        ],
       ),
-    );
-  }
-
-  Widget articleCard({required String image, required String title}) {
-    return Stack(
-      children: [
-        SizedBox(
-          width: double.infinity,
-          child: ClipRRect(
-            child: Image.asset(image),
-          ),
-        ),
-        Positioned(
-          bottom: 48,
-          left: 48,
-          right: 16,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  shadows: [
-                    Shadow(
-                      blurRadius: 4.0,
-                      color: Colors.black,
-                      offset: Offset(1, 1),
-                    )
-                  ],
-                ),
-              ),
-              const SizedBox(height: 8),
-              ElevatedButton(
-                onPressed: () {
-                  Get.toNamed('/artikel-detail');
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFFCE9D3),
-                  foregroundColor: Colors.black,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
-                child: const Text('Read Now'),
-              ),
-            ],
-          ),
-        ),
-      ],
     );
   }
 }

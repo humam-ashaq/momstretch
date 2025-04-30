@@ -2,18 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../data/app_colors.dart';
 import '../controllers/main_controller.dart';
-import '../../home/views/home_view.dart';
-import '../../stretching/views/stretching_view.dart';
 // import 'artikel_view.dart';
 // import 'profile_view.dart';
 
 class MainView extends GetView<MainController> {
-  final List<Widget> pages = [
-    HomeView(),
-    StretchingView(),
-    // ArtikelView(),
-    // ProfileView(),
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +60,7 @@ class MainView extends GetView<MainController> {
             ),
           )
         ),
-        body: pages[controller.currentIndex.value],
+        body: controller.pages[controller.currentIndex.value],
         bottomNavigationBar: ClipRRect(
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(20),

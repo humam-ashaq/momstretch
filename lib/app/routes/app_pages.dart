@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 
+import '../modules/education/bindings/education_binding.dart';
+import '../modules/education/views/education_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
 import '../modules/login/bindings/login_binding.dart';
@@ -64,6 +66,11 @@ class AppPages {
       name: _Paths.PROFILE,
       page: () => ProfileView(),
       binding: ProfileBinding(),
+    ),
+    GetPage(
+      name: _Paths.EDUCATION,
+      page: () => EducationView(),
+      binding: EducationBinding(),
     ),
   ];
 }

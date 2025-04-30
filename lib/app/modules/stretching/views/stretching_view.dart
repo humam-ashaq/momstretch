@@ -69,7 +69,7 @@ class StretchingView extends GetView<StretchingController> {
                                 // Overlay gradasi semi transparan (opsional, untuk kontras)
                                 Container(
                                   width: double.infinity,
-                                  height: 180,
+                                  height: 200,
                                   decoration: BoxDecoration(
                                     gradient: LinearGradient(
                                       begin: Alignment.bottomCenter,
@@ -100,13 +100,14 @@ class StretchingView extends GetView<StretchingController> {
                                         ),
                                         const SizedBox(height: 8),
                                         Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
                                             ElevatedButton(
                                               onPressed: () {
                                                 // Aksi Lihat Detail
                                               },
                                               style: ElevatedButton.styleFrom(
-                                                backgroundColor: AppColors.tertiaryColor,
+                                                backgroundColor: AppColors.forthColor,
                                                 foregroundColor: AppColors.primaryColor,
                                                 padding:
                                                     const EdgeInsets.symmetric(

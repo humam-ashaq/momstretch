@@ -28,7 +28,7 @@ class ProfileController extends GetxController {
       email.value = data['email'] ?? '';
       usia.value = data['usia']?.toString() ?? '';
       fotoProfil.value = data['foto_profil'] ?? '';
-      
+
       // Update controllers dengan data yang ada
       usiaC.text = usia.value;
       fotoProfilC.text = fotoProfil.value;
@@ -49,6 +49,20 @@ class ProfileController extends GetxController {
     } else {
       Get.snackbar('Error', result['message']);
     }
+  }
+
+  void performLogout() {
+    Get.defaultDialog(
+      title: "Keluar",
+      middleText: "Apakah kamu yakin ingin keluar?",
+      textCancel: "Batal",
+      textConfirm: "Keluar",
+      confirmTextColor: Colors.white,
+      onConfirm: () {
+        AuthService.logout();
+        Get.offAllNamed('/login');
+      },
+    ); // Atau route sesuai nama halaman login kamu
   }
 
   @override

@@ -6,12 +6,14 @@ class ProgramView extends GetView<ProgramController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              const SizedBox(height: 16),
               Center(
                 child: Text(
                   'MOMSTRETCH+',
@@ -23,69 +25,110 @@ class ProgramView extends GetView<ProgramController> {
                   ),
                 ),
               ),
-              const SizedBox(
-                height: 24,
-              ),
-              const Center(
-                child: Text(
-                  'Program Stretching',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              const SizedBox(height: 24),
+              const Text(
+                'Pilih Program\nStretchingmu',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF52463B),
                 ),
               ),
-              const SizedBox(
-                height: 12,
-              ),
-              Image.asset('assets/images/pilihprogram.png'),
-              const SizedBox(height: 24),
-              const Text("Mari mulai dengan menentukan\nProgram Stretching"),
-              const SizedBox(height: 12),
-              Obx(() => DropdownButtonFormField<String>(
-                    value: controller.selectedProgram.value,
-                    decoration: InputDecoration(
-                      hintText: "Pilih Program Stretching",
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12)),
+              const SizedBox(height: 32),
+              Obx(() {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _ProgramOption(
+                      label: 'Persalinan Normal',
+                      imageAsset: 'assets/icons/normal.png',
+                      isSelected: controller.selectedProgram.value == 'normal',
+                      onTap: () => controller.selectProgram('normal'),
                     ),
-                    items: controller.programList.map((program) {
-                      return DropdownMenuItem(
-                        value: program,
-                        child: Text(program),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      controller.selectedProgram.value = value;
-                    },
-                  )),
-              const SizedBox(height: 16),
-              TextField(
-                decoration: InputDecoration(
-                  labelText: "Usia",
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                ),
-                keyboardType: TextInputType.number,
-              ),
+                    _ProgramOption(
+                      label: 'Persalinan Caesar',
+                      imageAsset: 'assets/icons/caesar.png',
+                      isSelected: controller.selectedProgram.value == 'caesar',
+                      onTap: () => controller.selectProgram('caesar'),
+                    ),
+                  ],
+                );
+              }),
+              const Spacer(),
+              Obx(() {
+                return SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: controller.selectedProgram.value != null
+                        ? () => Get.offAllNamed('/main')
+                        : null,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF52463B),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                    ),
+                    child: const Text(
+                      'Pilih Program Stretching',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                );
+              }),
               const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Get.offAllNamed('/main');
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF52463B),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30)),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                  ),
-                  child: const Text(
-                    'KONFIRMASI',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ProgramOption extends StatelessWidget {
+  final String label;
+  final String imageAsset;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _ProgramOption({
+    required this.label,
+    required this.imageAsset,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 140,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isSelected ? const Color(0xFFEADFCF) : const Color(0xFFD2C1B2),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          children: [
+            Image.asset(
+              imageAsset,
+              height: 60,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: const Color(0xFF52463B),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
         ),
       ),
     );

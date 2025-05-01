@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mom_stretch/app/data/app_colors.dart';
 import '../controllers/profile_controller.dart';
 import 'profile_edit_view.dart';
 
@@ -51,7 +52,8 @@ class ProfileView extends GetView<ProfileController> {
                 ),
               ),
             ),
-          )),
+          )
+        ),
       body: Obx(() {
         if (controller.isLoading.value) {
           return const Center(child: CircularProgressIndicator());
@@ -90,10 +92,52 @@ class ProfileView extends GetView<ProfileController> {
                 title: Text(controller.usia.value),
                 subtitle: const Text('Usia'),
               ),
+              const SizedBox(height: 16,),
+              Text(
+                'Selengkapnya',
+                style: TextStyle(
+                  color: AppColors.primaryColor,
+                  fontSize: 24
+                ),
+              ),
+              const SizedBox(height: 8,),
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: AppColors.forthColor,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      menuTile(Icons.edit, 'Ubah Profil', () {
+                        // Navigasi ubah profil
+                      }),
+                      Divider(color: Colors.white),
+                      menuTile(Icons.info_outline, 'Tentang Aplikasi', () {
+                        // Navigasi tentang aplikasi
+                      }),
+                      Divider(color: Colors.white),
+                      menuTile(Icons.logout, 'Keluar', () {
+                        controller.performLogout();
+                      }),                      
+                    ],
+                  ),
+                ),
             ],
           ),
         );
       }),
     );
   }
+}
+
+Widget menuTile(IconData icon, String title, VoidCallback onTap) {
+  return ListTile(
+    leading: Icon(icon, color: AppColors.primaryColor),
+    title: Text(title, style: TextStyle(color: AppColors.primaryColor)),
+    trailing: Icon(Icons.arrow_forward_ios, color: AppColors.primaryColor, size: 16),
+    onTap: onTap,
+  );
 }

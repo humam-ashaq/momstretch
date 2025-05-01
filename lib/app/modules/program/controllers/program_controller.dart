@@ -1,10 +1,10 @@
 import 'package:get/get.dart';
 
 class ProgramController extends GetxController {
-  final selectedProgram = RxnString();
+  final RxnString selectedProgram = RxnString();
 
-  final List<String> programList = [
-    'Melahirkan Normal',
-    'Melahirkan Operasi Caesar',
-  ];
+  void selectProgram(String program) {
+    selectedProgram.value = program;
+  }
 }
+

@@ -102,7 +102,7 @@ class AuthService {
   }
 
   static void logout() {
-    box.erase(); // Bersihkan semua data
+    box.remove('token'); // Bersihkan semua data
   }
 
   static bool isLoggedIn() {

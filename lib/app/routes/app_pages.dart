@@ -26,6 +26,7 @@ import '../modules/program/views/program_view.dart';
 import '../modules/splash/bindings/splash_binding.dart';
 import '../modules/splash/views/splash_view.dart';
 import '../modules/stretching/bindings/stretching_binding.dart';
+import '../modules/stretching/views/stretching_cam_view.dart';
 import '../modules/stretching/views/stretching_detail_view.dart';
 import '../modules/stretching/views/stretching_view.dart';
 
@@ -70,6 +71,11 @@ class AppPages {
     GetPage(
       name: _Paths.STRETCHING,
       page: () => StretchingView(),
+      binding: StretchingBinding(),
+    ),
+    GetPage(
+      name: _Paths.STRETCHING_CAM,
+      page: () => StretchingCamView(),
       binding: StretchingBinding(),
     ),
     GetPage(

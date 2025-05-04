@@ -51,7 +51,8 @@ class StretchingDetailSheet extends GetView<StretchingController> {
             ),
             child: Text(
               item['description'] ?? 'Tidak ada deskripsi.',
-              style: const TextStyle(color: AppColors.primaryColor, fontSize: 14, height: 1.6),
+              style: const TextStyle(
+                  color: AppColors.primaryColor, fontSize: 14, height: 1.6),
             ),
           ),
           const SizedBox(height: 20),
@@ -59,7 +60,10 @@ class StretchingDetailSheet extends GetView<StretchingController> {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {
-                // TODO: aksi mulai gerakan
+                Get.back(); // Tutup bottom sheet terlebih dahulu
+                Future.delayed(const Duration(milliseconds: 300), () {
+                  controller.goToStretchingCamera(); // Pindah ke kamera
+                });
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primaryColor,

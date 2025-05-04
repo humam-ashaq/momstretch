@@ -1,10 +1,11 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../views/stretching_detail_sheet.dart';
 
 class StretchingController extends GetxController {
-
   @override
   void onInit() {
     super.onInit();
@@ -163,5 +164,47 @@ Perkuatan otot dasar panggul secara bertahap
     );
   }
 
-  
+  //cam logic
+  CameraController? cameraController;
+
+  Future<void> initializeCamera() async {
+    try {
+      await SystemChrome.setPreferredOrientations([
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.landscapeRight,
+      ]);
+
+      final cameras = await availableCameras();
+      final frontCam = cameras.firstWhere(
+        (cam) => cam.lensDirection == CameraLensDirection.front,
+      );
+
+      cameraController = CameraController(
+        frontCam,
+        ResolutionPreset.medium,
+        enableAudio: false, // biasakan disable audio jika tak perlu
+      );
+
+      await cameraController!.initialize();
+      update(); // trigger GetBuilder / Obx jika ada
+    } catch (e) {
+      print("Error initializing camera: $e");
+    }
+  }
+
+  // Dispose kamera saat keluar dari halaman
+  void disposeCamera() {
+    cameraController?.dispose();
+    cameraController = null;
+
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+  }
+
+  void goToStretchingCamera() async{
+    await initializeCamera(); // pastikan kamera siap sebelum pindah
+    Get.toNamed('/stretching-cam');
+  }
 }

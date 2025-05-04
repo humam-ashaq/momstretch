@@ -11,6 +11,7 @@ abstract class Routes {
   static const MAIN = _Paths.MAIN;
   static const STRETCHING = _Paths.STRETCHING;
   static const STRETCHING_DETAIL = _Paths.STRETCHING_DETAIL;
+  static const STRETCHING_CAM = _Paths.STRETCHING_CAM;
   static const PROFILE = _Paths.PROFILE;
   static const EDUCATION = _Paths.EDUCATION;
   static const EDUCATION_DETAIL = _Paths.EDUCATION_DETAIL;
@@ -32,6 +33,7 @@ abstract class _Paths {
   static const MAIN = '/main';
   static const STRETCHING = '/stretching';
   static const STRETCHING_DETAIL = '/stretching-detail';
+  static const STRETCHING_CAM = '/stretching-cam';
   static const PROFILE = '/profile';
   static const EDUCATION = '/education';
   static const EDUCATION_DETAIL = '/education-detail';

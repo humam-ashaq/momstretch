@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mom_stretch/app/data/app_colors.dart';
 import '../controllers/program_controller.dart';
 
 class ProgramView extends GetView<ProgramController> {
@@ -13,32 +14,33 @@ class ProgramView extends GetView<ProgramController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(height: 16),
+              const SizedBox(height: 30),
               Center(
                 child: Text(
                   'MOMSTRETCH+',
                   style: TextStyle(
                     letterSpacing: 2,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                    color: Colors.amber[700],
+                    fontFamily: 'HammersmithOne',
+                    fontWeight: FontWeight.normal,
+                    fontSize: 20,
+                    color: Color.fromARGB(1000, 235, 203, 143),
                   ),
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 40),
               const Text(
                 'Pilih Program\nStretchingmu',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF52463B),
+                  color: AppColors.primaryColor,
                 ),
               ),
               const SizedBox(height: 32),
               Obx(() {
                 return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     _ProgramOption(
                       label: 'Persalinan Normal',
@@ -64,7 +66,7 @@ class ProgramView extends GetView<ProgramController> {
                         ? () => Get.offAllNamed('/main')
                         : null,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF52463B),
+                      backgroundColor: AppColors.primaryColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
@@ -73,9 +75,9 @@ class ProgramView extends GetView<ProgramController> {
                     child: const Text(
                       'Pilih Program Stretching',
                       style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: Colors.white),
                     ),
                   ),
                 );
@@ -107,24 +109,27 @@ class _ProgramOption extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 140,
+        width: 160,
+        height: 240,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: isSelected ? const Color(0xFFEADFCF) : const Color(0xFFD2C1B2),
           borderRadius: BorderRadius.circular(16),
         ),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
               imageAsset,
-              height: 60,
+              width: 100,
             ),
             const SizedBox(height: 12),
             Text(
               label,
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: const Color(0xFF52463B),
+                color: AppColors.primaryColor,
+                fontSize: 14,
                 fontWeight: FontWeight.w600,
               ),
             ),

@@ -8,6 +8,7 @@ class ProfileView extends GetView<ProfileController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: PreferredSize(
           preferredSize: Size.fromHeight(60),
           child: Container(
@@ -22,6 +23,7 @@ class ProfileView extends GetView<ProfileController> {
               )
             ]),
             child: AppBar(
+              backgroundColor: Colors.white,
               automaticallyImplyLeading: false,
               title: Padding(
                 padding: const EdgeInsets.fromLTRB(12, 30, 12, 24),
@@ -43,7 +45,7 @@ class ProfileView extends GetView<ProfileController> {
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.edit),
+                      icon: const Icon(Icons.edit, color: Colors.white,),
                       onPressed: () {
                         Get.to(() => ProfileEditView());
                       },
@@ -69,38 +71,30 @@ class ProfileView extends GetView<ProfileController> {
                     : const AssetImage('assets/images/default_profile.jpg')
                         as ImageProvider,
               ),
-              const SizedBox(height: 8,),
               Text(
-                "Asih",
+                "Asih Rahmawati",
                 style: TextStyle(
-                  fontSize: 32
-                ),
-              ),
-              const SizedBox(height: 20),
-              ListTile(
-                leading: const Icon(Icons.person),
-                title: Text(controller.nama.value),
-                subtitle: const Text('Nama'),
-              ),
-              ListTile(
-                leading: const Icon(Icons.email),
-                title: Text(controller.email.value),
-                subtitle: const Text('Email'),
-              ),
-              ListTile(
-                leading: const Icon(Icons.cake),
-                title: Text(controller.usia.value),
-                subtitle: const Text('Usia'),
-              ),
-              const SizedBox(height: 16,),
-              Text(
-                'Selengkapnya',
-                style: TextStyle(
-                  color: AppColors.primaryColor,
                   fontSize: 24
                 ),
               ),
-              const SizedBox(height: 8,),
+              Text(
+                'asihra123@gmail.com',
+                style: TextStyle(
+                  fontSize: 16
+                ),
+              ),
+              const SizedBox(height: 16),
+              ListTile(
+                leading: const Icon(Icons.book),
+                title: Text('Persalinan Normal'),
+                subtitle: const Text('Program Stretching'),
+              ),
+              ListTile(
+                leading: const Icon(Icons.cake),
+                title: Text('26 Tahun'),
+                subtitle: const Text('Usia'),
+              ),
+              const SizedBox(height: 16,),
               Container(
                 margin: EdgeInsets.symmetric(horizontal: 20),
                 padding: EdgeInsets.all(16),
@@ -112,7 +106,7 @@ class ProfileView extends GetView<ProfileController> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       menuTile(Icons.edit, 'Ubah Profil', () {
-                        // Navigasi ubah profil
+                        Get.toNamed('/profile-edit');
                       }),
                       Divider(color: Colors.white),
                       menuTile(Icons.info_outline, 'Tentang Aplikasi', () {

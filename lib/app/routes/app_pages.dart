@@ -20,6 +20,7 @@ import '../modules/mood_check/views/epds_onboarding_view.dart';
 import '../modules/mood_check/views/epds_test_view.dart';
 import '../modules/mood_check/views/mood_check_view.dart';
 import '../modules/profile/bindings/profile_binding.dart';
+import '../modules/profile/views/profile_edit_view.dart';
 import '../modules/profile/views/profile_view.dart';
 import '../modules/program/bindings/program_binding.dart';
 import '../modules/program/views/program_view.dart';
@@ -88,6 +89,11 @@ class AppPages {
     GetPage(
       name: _Paths.PROFILE,
       page: () => ProfileView(),
+      binding: ProfileBinding(),
+    ),
+    GetPage(
+      name: _Paths.PROFILE_EDIT,
+      page: () => ProfileEditView(),
       binding: ProfileBinding(),
     ),
     GetPage(

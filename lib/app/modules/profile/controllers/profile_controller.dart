@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../../services/auth_service.dart';
 
 class ProfileController extends GetxController {
@@ -48,6 +51,16 @@ class ProfileController extends GetxController {
       await fetchProfile(); // Refresh data profil
     } else {
       Get.snackbar('Error', result['message']);
+    }
+  }
+
+  var selectedImage = Rxn<File>(); // null-safe observable
+
+  Future<void> pickImageFromGallery() async {
+    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      selectedImage.value = File(pickedFile.path);
+      fotoProfilC.text = pickedFile.path; // Kalau backend masih pakai URL / path lokal
     }
   }
 

@@ -13,6 +13,9 @@ abstract class Routes {
   static const PROFILE = _Paths.PROFILE;
   static const EDUCATION = _Paths.EDUCATION;
   static const MOOD_CHECK = _Paths.MOOD_CHECK;
+  static const FORGOT_PASSWORD = _Paths.FORGOT_PASSWORD;
+  static const FORGOT_OTP = _Paths.FORGOT_OTP;
+  static const FORGOT_RESET = _Paths.FORGOT_RESET;
 }
 
 abstract class _Paths {
@@ -27,4 +30,7 @@ abstract class _Paths {
   static const PROFILE = '/profile';
   static const EDUCATION = '/education';
   static const MOOD_CHECK = '/mood-check';
+  static const FORGOT_PASSWORD = '/forgot-password';
+  static const FORGOT_OTP = '/forgot-otp';
+  static const FORGOT_RESET = '/forgot-reset';
 }

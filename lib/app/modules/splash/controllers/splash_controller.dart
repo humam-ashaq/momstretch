@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
+import '../../../services/auth_service.dart';
 
 class SplashController extends GetxController with GetTickerProviderStateMixin {
   late AnimationController animationController;
   late Animation<double> fadeAnimation;
-  final box = GetStorage();
 
   @override
   void onInit() {
@@ -30,7 +29,7 @@ class SplashController extends GetxController with GetTickerProviderStateMixin {
   }
 
   void _checkLogin() {
-    String? token = box.read('token');
+    final token = AuthService.box.read('token');
     print('token: ${token}');
     if (token != null && token.isNotEmpty) {
       Get.offAllNamed('/main'); // Kalau sudah login, ke halaman home

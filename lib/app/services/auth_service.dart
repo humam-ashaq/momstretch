@@ -4,7 +4,8 @@ import 'package:get_storage/get_storage.dart';
 
 class AuthService {
   static final box = GetStorage();
-  static const baseUrl = 'https://externally-popular-adder.ngrok-free.app'; // Ganti IP server kamu
+  static const baseUrl =
+      'https://externally-popular-adder.ngrok-free.app'; // Ganti IP server kamu
 
   static Future<Map<String, dynamic>> register(
       String email, String password, String nama) async {
@@ -41,8 +42,8 @@ class AuthService {
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      box.write('token', data['token']);
-      box.write('nama', data['nama']);
+      await box.write('token', data['token']);
+      await box.write('nama', data['nama']);
       return {'success': true, 'message': 'Login berhasil'};
     } else {
       return {
@@ -54,6 +55,7 @@ class AuthService {
 
   static Future<Map<String, dynamic>> getProfile() async {
     final token = box.read('token');
+    print("Token di getProfile: $token"); // Debugging
     final response = await http.get(
       Uri.parse('$baseUrl/profile'),
       headers: {
@@ -78,7 +80,7 @@ class AuthService {
     final token = box.read('token');
     final response = await http.put(
       Uri.parse('$baseUrl/profile'),
-      headers: {  
+      headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
       },

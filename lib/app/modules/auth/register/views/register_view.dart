@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/register_controller.dart';
-import '../../../data/app_colors.dart';
+import '../../../../data/app_colors.dart';
 
 class RegisterView extends GetView<RegisterController> {
   const RegisterView({super.key});

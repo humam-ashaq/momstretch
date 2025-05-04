@@ -42,13 +42,13 @@ class ProgramView extends GetView<ProgramController> {
                   children: [
                     _ProgramOption(
                       label: 'Persalinan Normal',
-                      imageAsset: 'assets/icons/normal.png',
+                      imageAsset: 'assets/images/normal.png',
                       isSelected: controller.selectedProgram.value == 'normal',
                       onTap: () => controller.selectProgram('normal'),
                     ),
                     _ProgramOption(
                       label: 'Persalinan Caesar',
-                      imageAsset: 'assets/icons/caesar.png',
+                      imageAsset: 'assets/images/caesar.png',
                       isSelected: controller.selectedProgram.value == 'caesar',
                       onTap: () => controller.selectProgram('caesar'),
                     ),

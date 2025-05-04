@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../services/auth_service.dart';
-import '../../../data/widgets/custom_snackbar.dart';
+import '../../../../services/auth_service.dart';
+import '../../../../data/widgets/custom_snackbar.dart';
 
 class RegisterController extends GetxController {
   final emailC = TextEditingController();

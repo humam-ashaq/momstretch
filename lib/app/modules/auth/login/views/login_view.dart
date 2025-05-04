@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/login_controller.dart';
-import '../../../data/app_colors.dart';
+import '../../../../data/app_colors.dart';
 
 class LoginView extends GetView<LoginController> {
   @override
@@ -109,7 +109,7 @@ class LoginView extends GetView<LoginController> {
                   children: [
                     TextButton(
                       onPressed: () {
-                        // Tambahkan navigasi lupa password kalau perlu
+                        Get.toNamed('/forgot-password');
                       },
                       child: Text(
                         'Lupa Kata Sandi?',

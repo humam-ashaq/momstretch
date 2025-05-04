@@ -23,8 +23,8 @@ class ReminderController extends GetxController {
 
   Future<void> scheduleDailyNotification() async {
     final selectedTime = time.value;
-    final now = DateTime.now();
-    final scheduledTime = DateTime(now.year, now.month, now.day, selectedTime.hour, selectedTime.minute);
+    // final now = DateTime.now();
+    // final scheduledTime = DateTime(now.year, now.month, now.day, selectedTime.hour, selectedTime.minute);
 
     await notifications.zonedSchedule(
       0,

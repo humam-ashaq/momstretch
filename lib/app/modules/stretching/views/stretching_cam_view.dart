@@ -17,7 +17,7 @@ class StretchingCamView extends GetView<StretchingController> {
           final movement = controller.selectedMovement.value;
 
           return Scaffold(
-            backgroundColor: Colors.black,
+            backgroundColor: AppColors.primaryColor,
             body: SafeArea(
               child: Stack(
                 children: [
@@ -61,7 +61,7 @@ class StretchingCamView extends GetView<StretchingController> {
                               // Tombol kembali
                               IconButton(
                                 icon: const Icon(Icons.arrow_back,
-                                    color: AppColors.forthColor),
+                                    color: Colors.white),
                                 onPressed: () {
                                   controller.disposeCamera();
                                   Get.back();
@@ -76,13 +76,13 @@ class StretchingCamView extends GetView<StretchingController> {
                                     movement?['title'] ?? '',
                                     style: const TextStyle(
                                       fontSize: 18,
-                                      color: AppColors.forthColor,
+                                      color: Colors.white,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                   const Text(
                                     'Posisikan tubuh sesuai contoh',
-                                    style: TextStyle(color: Colors.white70),
+                                    style: TextStyle(color: Colors.white),
                                   ),
                                 ],
                               ),

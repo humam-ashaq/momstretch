@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 
+import '../modules/article/bindings/article_binding.dart';
+import '../modules/article/views/articel_view.dart';
 import '../modules/auth/forgot_password/bindings/forgot_password_binding.dart';
 import '../modules/auth/forgot_password/views/forgot_password_checkemail_view.dart';
 import '../modules/auth/forgot_password/views/forgot_password_email_view.dart';
@@ -140,6 +142,11 @@ class AppPages {
       name: _Paths.REMINDER,
       page: () => ReminderView(),
       binding: ReminderBinding(),
+    ),
+    GetPage(
+      name: _Paths.ARTICLE,
+      page: () => const ArticleView(),
+      binding: ArticleBinding(),
     ),
   ];
 }

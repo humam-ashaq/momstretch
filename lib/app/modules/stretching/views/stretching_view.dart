@@ -39,7 +39,7 @@ class StretchingView extends GetView<StretchingController> {
                     items: controller.programList.map((program) {
                       return DropdownMenuItem(
                         value: program,
-                        child: Text(program),
+                        child: Text(program, style: const TextStyle(color: AppColors.primaryColor)),
                       );
                     }).toList(),
                     onChanged: (value) {

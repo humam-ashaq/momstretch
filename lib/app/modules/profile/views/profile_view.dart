@@ -31,7 +31,7 @@ class ProfileView extends GetView<ProfileController> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     IconButton(
-                      icon: Icon(Icons.arrow_back_ios),
+                      icon: Icon(Icons.arrow_back_ios, color: AppColors.primaryColor,),
                       onPressed: () => Get.back(),
                     ),
                     Text(
@@ -74,25 +74,27 @@ class ProfileView extends GetView<ProfileController> {
               Text(
                 "Asih Rahmawati",
                 style: TextStyle(
-                  fontSize: 24
+                  fontSize: 24,
+                  color: AppColors.primaryColor
                 ),
               ),
               Text(
                 'asihra123@gmail.com',
                 style: TextStyle(
-                  fontSize: 16
+                  fontSize: 16,
+                  color: AppColors.primaryColor
                 ),
               ),
               const SizedBox(height: 16),
               ListTile(
-                leading: const Icon(Icons.book),
-                title: Text('Persalinan Normal'),
-                subtitle: const Text('Program Stretching'),
+                leading: const Icon(Icons.book, color: AppColors.primaryColor,),
+                title: Text('Persalinan Normal', style: TextStyle(color: AppColors.primaryColor),),
+                subtitle: const Text('Program Stretching', style: TextStyle(color: AppColors.primaryColor),),
               ),
               ListTile(
-                leading: const Icon(Icons.cake),
-                title: Text('26 Tahun'),
-                subtitle: const Text('Usia'),
+                leading: const Icon(Icons.cake, color: AppColors.primaryColor,),
+                title: Text('26 Tahun', style: TextStyle(color: AppColors.primaryColor),),
+                subtitle: const Text('Usia', style: TextStyle(color: AppColors.primaryColor),),
               ),
               const SizedBox(height: 16,),
               Container(

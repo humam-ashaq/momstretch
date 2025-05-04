@@ -43,7 +43,7 @@ class ReminderView extends GetView<ReminderController> {
                     Text('${time.format(context)}',
                         style: const TextStyle(fontSize: 28, color: AppColors.primaryColor)),
                     const SizedBox(width: 8),
-                    const Text('every day'),
+                    const Text('setiap hari'),
                     const Spacer(),
                     Obx(() => Switch(
                       value: controller.isEnabled.value,

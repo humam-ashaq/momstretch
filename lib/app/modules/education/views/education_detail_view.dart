@@ -25,7 +25,7 @@ class EducationDetailView extends GetView<EducationController> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               IconButton(
-                icon: const Icon(Icons.arrow_back),
+                icon: const Icon(Icons.arrow_back, color: AppColors.primaryColor,),
                 onPressed: () => Get.back(),
               ),
               const SizedBox(height: 16),
@@ -49,14 +49,14 @@ class EducationDetailView extends GetView<EducationController> {
               const SizedBox(height: 12),
               Text(
                 data['subtitle'] ?? '',
-                style: const TextStyle(fontSize: 16),
+                style: const TextStyle(fontSize: 16, color: AppColors.primaryColor),
               ),
               const SizedBox(height: 24),
               const Text(
                 // Konten placeholder
                 "Setelah melewati proses persalinan yang panjang dan menegangkan, tubuh Bunda pasti membutuhkan waktu istirahat yang cukup. "
                 "Apalagi, sibuk merawat bayi baru lahir membuat Bunda cepat merasa lelah. Yuk, ketahui bagaimana cara menjaga kesehatan setelah melahirkan!",
-                style: TextStyle(fontSize: 14, height: 1.6),
+                style: TextStyle(fontSize: 14, height: 1.6, color: AppColors.primaryColor),
               ),
             ],
           ),

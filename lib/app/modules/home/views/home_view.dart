@@ -22,7 +22,7 @@ class HomeView extends GetView<HomeController> {
                   children: [
                     Text(
                       // nanti ambil dari database
-                      'Welcome, Asihra',
+                      'Selamat Datang, \nAsihra',
                       style: TextStyle(
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
@@ -59,7 +59,7 @@ class HomeView extends GetView<HomeController> {
                                 ),
                               ),
                               child: const Text(
-                                'Explore Stretching',
+                                'Telusuri Stretching',
                                 style: TextStyle(color: Colors.white),
                               ),
                             ),
@@ -93,7 +93,7 @@ class HomeView extends GetView<HomeController> {
                           ),
                         ),
                         child: const Text(
-                          'View All',
+                          'Lihat Semua',
                           style: TextStyle(color: Colors.white),
                         ),
                       ),
@@ -123,7 +123,7 @@ class HomeView extends GetView<HomeController> {
               ),
               
               child: Container(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.only(left: 8, right: 8, top: 16, bottom: 16),
                 decoration: BoxDecoration(
                   color: AppColors.forthColor,
                 ),
@@ -134,12 +134,12 @@ class HomeView extends GetView<HomeController> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Health Test',
+                          'Test Kesehatan Mental',
                           style: TextStyle(fontWeight: FontWeight.bold,
                           color: AppColors.primaryColor),
                         ),
                         SizedBox(height: 4),
-                        Text('Detect baby blues with EPDS',style: TextStyle(
+                        Text('Deteksi Baby Blues menggunakan EPDS',style: TextStyle(
                           color: AppColors.primaryColor),),
                       ],
                     ),

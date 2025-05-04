@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mom_stretch/app/data/app_colors.dart';
 import 'package:mom_stretch/app/modules/mood_check/controllers/mood_check_controller.dart';
 
 class EpdsTestView extends GetView<MoodCheckController> {
@@ -8,7 +9,10 @@ class EpdsTestView extends GetView<MoodCheckController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Test EPDS')),
+      backgroundColor: Colors.white,
+      appBar: AppBar(title: const Text('Tes EPDS', style: TextStyle(
+        color: AppColors.primaryColor
+      ),), backgroundColor: Colors.white,),
       body: SafeArea(
         child: Obx(() => controller.isSubmitted.value
             ? _buildResult(controller)
@@ -24,7 +28,7 @@ class EpdsTestView extends GetView<MoodCheckController> {
         children: [
           const Text(
             'Pilih jawaban yang paling dekat dengan perasaan Anda dalam 7 hari terakhir:',
-            style: TextStyle(fontSize: 14),
+            style: TextStyle(fontSize: 14, color: AppColors.primaryColor),
           ),
           const SizedBox(height: 16),
           Expanded(
@@ -38,13 +42,13 @@ class EpdsTestView extends GetView<MoodCheckController> {
                     Text(
                       '${index + 1}. ${question['question']}',
                       style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold),
+                          fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.primaryColor),
                     ),
                     ...List.generate((question['options'] as List).length,
                         (optIndex) {
                       final option = question['options'][optIndex];
                       return Obx(() => RadioListTile(
-                            title: Text(option['text']),
+                            title: Text(option['text'], style: TextStyle(color: AppColors.primaryColor,)),
                             value: optIndex,
                             groupValue: controller.answers[index],
                             onChanged: (val) => controller.setAnswer(index, val as int),
@@ -60,7 +64,7 @@ class EpdsTestView extends GetView<MoodCheckController> {
             onPressed: controller.allAnswered
                 ? controller.submitAnswers
                 : null,
-            child: const Text('Submit'),
+            child: const Text('Kirim'),
           ),
         ],
       ),

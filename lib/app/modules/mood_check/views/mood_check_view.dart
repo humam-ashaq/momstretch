@@ -32,7 +32,7 @@ class MoodCheckView extends GetView<MoodCheckController> {
                       children: [
                         const SizedBox(height: 16),
                         const Text(
-                          'Take EPDS test',
+                          'Tes EPDS',
                           style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
@@ -47,7 +47,7 @@ class MoodCheckView extends GetView<MoodCheckController> {
                           child: Container(
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF4E3D30),
+                              color: AppColors.primaryColor,
                               borderRadius: BorderRadius.circular(16),
                             ),
                             child: Row(
@@ -57,7 +57,7 @@ class MoodCheckView extends GetView<MoodCheckController> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'Take EPDS Test',
+                                      'Ikut Tes EPDS',
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
@@ -78,7 +78,7 @@ class MoodCheckView extends GetView<MoodCheckController> {
                         ),
                         const SizedBox(height: 24),
                         const Text(
-                          'Results',
+                          'Hasil',
                           style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -96,7 +96,7 @@ class MoodCheckView extends GetView<MoodCheckController> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'EPDS Score : ${controller.epdsScore.value}',
+                                    'Skor EPDS: ${controller.epdsScore.value}',
                                     style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 14,
@@ -132,7 +132,7 @@ class MoodCheckView extends GetView<MoodCheckController> {
                     children: [
                       const SizedBox(height: 16,),
                       const Text(
-                        'History',
+                        'Rowayat',
                         style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -150,7 +150,7 @@ class MoodCheckView extends GetView<MoodCheckController> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Text(
-                              'EPDS Score',
+                              'Skor EPDS',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.primaryColor
@@ -175,7 +175,7 @@ class MoodCheckView extends GetView<MoodCheckController> {
                                               ))
                                           .toList(),
                                       isCurved: true,
-                                      color: const Color(0xFF4E3D30),
+                                      color: AppColors.primaryColor,
                                       barWidth: 3,
                                       dotData: FlDotData(show: true),
                                     ),

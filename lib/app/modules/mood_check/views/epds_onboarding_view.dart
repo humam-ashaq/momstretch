@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mom_stretch/app/modules/mood_check/controllers/mood_check_controller.dart';
 
+import '../../../data/app_colors.dart';
+
 class EpdsOnboardingView extends GetView<MoodCheckController> {
   const EpdsOnboardingView({Key? key}) : super(key: key);
 
@@ -80,16 +82,16 @@ class _OnboardingPage extends StatelessWidget {
         const SizedBox(height: 32),
         Image.asset(imagePath, height: 280),
         const SizedBox(height: 20),
-        Text(title, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+        Text(title, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.primaryColor)),
         const SizedBox(height: 4),
-        Text(subtitle, style: const TextStyle(fontSize: 14)),
+        Text(subtitle, style: const TextStyle(fontSize: 14, color: AppColors.primaryColor)),
         const SizedBox(height: 20),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Text(
             description,
             textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+            style: const TextStyle(color: AppColors.primaryColor,fontSize: 14, fontWeight: FontWeight.w600),
           ),
         ),
       ],
@@ -116,7 +118,9 @@ class _BottomNavigation extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       child: Row(
         children: [
-          TextButton(onPressed: onBack, child: const Text('BACK')),
+          TextButton(onPressed: onBack, child: const Text('BACK', style: TextStyle(
+            color: AppColors.primaryColor
+          ),)),
           const Spacer(),
           Row(
             children: List.generate(3, (index) {
@@ -126,7 +130,7 @@ class _BottomNavigation extends StatelessWidget {
                 width: 10,
                 height: 10,
                 decoration: BoxDecoration(
-                  color: isActive ? Colors.brown : Colors.grey[300],
+                  color: isActive ? AppColors.primaryColor : AppColors.forthColor,
                   shape: BoxShape.circle,
                 ),
               );
@@ -135,7 +139,9 @@ class _BottomNavigation extends StatelessWidget {
           const Spacer(),
           TextButton(
             onPressed: onNext,
-            child: Text(isLast ? 'MULAI' : 'NEXT'),
+            child: Text(isLast ? 'MULAI' : 'NEXT', style:TextStyle(
+              color: AppColors.primaryColor
+            ),),
           ),
         ],
       ),

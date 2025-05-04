@@ -61,7 +61,7 @@ class StretchingDetailView extends GetView<StretchingController> {
                 ),
                 child: Text(
                   '${stretching['duration']}, $program',
-                  style: const TextStyle(fontSize: 16),
+                  style: const TextStyle(fontSize: 16, color: AppColors.primaryColor),
                 ),
               ),
             ),
@@ -80,7 +80,7 @@ class StretchingDetailView extends GetView<StretchingController> {
                 ),
                 child: Text(
                   controller.getProgramDescription(program),
-                  style: const TextStyle(fontSize: 14, color: Colors.black87),
+                  style: const TextStyle(fontSize: 14, color: AppColors.primaryColor),
                 ),
               ),
             ),
@@ -97,6 +97,7 @@ class StretchingDetailView extends GetView<StretchingController> {
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
+                    color: AppColors.primaryColor
                   ),
                 ),
               ),
@@ -115,6 +116,7 @@ class StretchingDetailView extends GetView<StretchingController> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
+                    color:Colors.white,
                     elevation: 4,
                     margin: const EdgeInsets.only(bottom: 16),
                     child: Padding(

@@ -66,17 +66,18 @@ class EducationView extends GetView<EducationController> {
                                       style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 14,
+                                        color: AppColors.primaryColor
                                       ),
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
                                       edu['subtitle']!,
-                                      style: const TextStyle(fontSize: 12),
+                                      style: const TextStyle(fontSize: 12, color: AppColors.primaryColor),
                                     ),
                                   ],
                                 ),
                               ),
-                              const Icon(Icons.arrow_forward_ios, size: 16),
+                              const Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.primaryColor,),
                             ],
                           ),
                         ),

@@ -9,11 +9,11 @@ class MoodCheckController extends GetxController {
 
   String get epdsResult {
     if (epdsScore.value >= 13) {
-      return 'High risk of depression';
+      return 'Beresiko Tinggi Depresi';
     } else if (epdsScore.value >= 10) {
-      return 'Possible depression';
+      return 'Berkemungkinan Depresi';
     } else {
-      return 'Low risk';
+      return 'Resiko Rendah';
     }
   }
 

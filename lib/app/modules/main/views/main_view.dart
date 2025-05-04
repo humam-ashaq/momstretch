@@ -76,7 +76,7 @@ class MainView extends GetView<MainController> {
             items: const [
               BottomNavigationBarItem(
                 icon: Icon(Icons.home),
-                label: 'Home',
+                label: 'Beranda',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.accessibility_new),

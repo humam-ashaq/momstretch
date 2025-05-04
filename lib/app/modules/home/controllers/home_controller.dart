@@ -29,11 +29,11 @@ class HomeController extends GetxController {
   }
 
   void onReadNowPressed() {
-    Get.toNamed('/artikel-detail');
+    Get.toNamed('/article-detail');
   }
 
   void onViewAllPressed() {
-    Get.toNamed('/artikel');
+    Get.toNamed('/article');
   }
 
   Widget buildArticleCard(String image, String title) {
@@ -82,7 +82,7 @@ class HomeController extends GetxController {
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-                child: const Text('Read Now'),
+                child: const Text('Baca Sekarang'),
               ),
             ],
           ),

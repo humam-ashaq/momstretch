@@ -16,13 +16,13 @@ class StretchingController extends GetxController {
     {
       'image': 'assets/images/pose2.png',
       'title': 'Senam Perut',
-      'level': 'Beginner',
+      'level': 'Pemula',
       'duration': '23 menit',
     },
     {
       'image': 'assets/images/pose1.png',
       'title': 'Pose Kupu-Kupu',
-      'level': 'Beginner',
+      'level': 'Pemula',
       'duration': '20 menit',
     },
   ].obs;
@@ -34,8 +34,8 @@ class StretchingController extends GetxController {
       Rxn<Map<String, String>>(); // Detail gerakan yang dipilih
 
   final List<String> programList = [
-    'Melahirkan Normal',
-    'Melahirkan Operasi Caesar',
+    'Persalinan Normal',
+    'Persalinan Operasi Caesar',
   ];
 
   final Map<String, List<Map<String, String>>> movementsByStretchingType = {
@@ -117,7 +117,7 @@ Slide Out:
 
   String getProgramDescription(String program) {
     switch (program) {
-      case 'Melahirkan Normal':
+      case 'Persalinan Normal':
         return '''
 🌞 Untuk persalinan normal:
 Mulai 1–2 hari pasca melahirkan (jika tidak ada komplikasi).
@@ -130,7 +130,7 @@ Pernapasan dalam
 Senam Kegel (melatih otot dasar panggul)  
 Peregangan ringan
 ''';
-      case 'Melahirkan Operasi Caesar':
+      case 'Persalinan Operasi Caesar':
         return '''
 🌸 Untuk persalinan Caesar:
 Mulai setelah dokter mengizinkan (umumnya 4–6 minggu pasca operasi).

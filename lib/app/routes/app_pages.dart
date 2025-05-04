@@ -23,6 +23,7 @@ import '../modules/program/views/program_view.dart';
 import '../modules/splash/bindings/splash_binding.dart';
 import '../modules/splash/views/splash_view.dart';
 import '../modules/stretching/bindings/stretching_binding.dart';
+import '../modules/stretching/views/stretching_detail_view.dart';
 import '../modules/stretching/views/stretching_view.dart';
 
 part 'app_routes.dart';
@@ -66,6 +67,11 @@ class AppPages {
     GetPage(
       name: _Paths.STRETCHING,
       page: () => StretchingView(),
+      binding: StretchingBinding(),
+    ),
+    GetPage(
+      name: _Paths.STRETCHING_DETAIL,
+      page: () => StretchingDetailView(),
       binding: StretchingBinding(),
     ),
     GetPage(

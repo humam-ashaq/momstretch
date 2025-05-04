@@ -16,23 +16,25 @@ class StretchingView extends GetView<StretchingController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
-                //nanti ambil dari database
+              const Text(
                 'Stretching Pasca Melahirkan',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+                  color: AppColors.primaryColor,
                   height: 1.5,
                 ),
               ),
               const SizedBox(height: 24),
+
+              // Dropdown Pilihan Program
               Obx(() => DropdownButtonFormField<String>(
                     value: controller.selectedProgram.value,
                     decoration: InputDecoration(
                       hintText: "Pilih Program Stretching",
                       border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                     items: controller.programList.map((program) {
                       return DropdownMenuItem(
@@ -44,10 +46,10 @@ class StretchingView extends GetView<StretchingController> {
                       controller.selectedProgram.value = value;
                     },
                   )),
-              const SizedBox(
-                height: 24,
-              ),
-              // List of workouts
+
+              const SizedBox(height: 24),
+
+              // List Stretching
               Expanded(
                 child: Obx(() => ListView.builder(
                       itemCount: controller.stretchingList.length,
@@ -59,14 +61,15 @@ class StretchingView extends GetView<StretchingController> {
                             borderRadius: BorderRadius.circular(12),
                             child: Stack(
                               children: [
-                                // Gambar
+                                // Gambar Stretching
                                 Image.asset(
                                   item['image']!,
                                   width: double.infinity,
                                   height: 200,
                                   fit: BoxFit.cover,
                                 ),
-                                // Overlay gradasi semi transparan (opsional, untuk kontras)
+
+                                // Overlay gradasi hitam-transparan untuk kontras teks
                                 Container(
                                   width: double.infinity,
                                   height: 200,
@@ -81,10 +84,11 @@ class StretchingView extends GetView<StretchingController> {
                                     ),
                                   ),
                                 ),
-                                // Konten di atas gambar
+
+                                // Konten teks di atas gambar
                                 Positioned.fill(
                                   child: Padding(
-                                    padding: const EdgeInsets.all(12),
+                                    padding: const EdgeInsets.all(16),
                                     child: Column(
                                       mainAxisAlignment: MainAxisAlignment.end,
                                       crossAxisAlignment:
@@ -93,22 +97,61 @@ class StretchingView extends GetView<StretchingController> {
                                         Text(
                                           item['title']!,
                                           style: const TextStyle(
-                                            fontSize: 16,
+                                            fontSize: 20,
                                             fontWeight: FontWeight.bold,
                                             color: Colors.white,
                                           ),
                                         ),
                                         const SizedBox(height: 8),
                                         Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
+                                            Container(
+                                              padding: const EdgeInsets.symmetric(
+                                                  horizontal: 12, vertical: 4),
+                                              decoration: BoxDecoration(
+                                                color: Colors.white70,
+                                                borderRadius:
+                                                    BorderRadius.circular(6),
+                                              ),
+                                              child: Row(
+                                                children: [
+                                                  const Icon(Icons.timer, size: 16),
+                                                  const SizedBox(width: 4),
+                                                  Text(item['duration'] ?? '',
+                                                      style: const TextStyle(
+                                                          fontSize: 12)),
+                                                ],
+                                              ),
+                                            ),
+                                            const SizedBox(width: 12),
+                                            Container(
+                                              padding: const EdgeInsets.symmetric(
+                                                  horizontal: 12, vertical: 4),
+                                              decoration: BoxDecoration(
+                                                color: Colors.white70,
+                                                borderRadius:
+                                                    BorderRadius.circular(6),
+                                              ),
+                                              child: Row(
+                                                children: [
+                                                  const Icon(Icons.flag, size: 16),
+                                                  const SizedBox(width: 4),
+                                                  Text(item['level'] ?? '',
+                                                      style: const TextStyle(
+                                                          fontSize: 12)),
+                                                ],
+                                              ),
+                                            ),
+                                            const Spacer(),
                                             ElevatedButton(
                                               onPressed: () {
-                                                // Aksi Lihat Detail
+                                                controller.goToStretchingDetail(item);
                                               },
                                               style: ElevatedButton.styleFrom(
-                                                backgroundColor: AppColors.forthColor,
-                                                foregroundColor: AppColors.primaryColor,
+                                                backgroundColor:
+                                                    AppColors.forthColor,
+                                                foregroundColor:
+                                                    AppColors.primaryColor,
                                                 padding:
                                                     const EdgeInsets.symmetric(
                                                         horizontal: 16,
@@ -119,26 +162,6 @@ class StretchingView extends GetView<StretchingController> {
                                                 ),
                                               ),
                                               child: const Text("Lihat Detail"),
-                                            ),
-                                            const SizedBox(width: 12),
-                                            ElevatedButton(
-                                              onPressed: () {
-                                                // Aksi Mulai Gerakan
-                                              },
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor: Colors.brown,
-                                                foregroundColor: Colors.white,
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 16,
-                                                        vertical: 8),
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                ),
-                                              ),
-                                              child:
-                                                  const Text("Mulai Gerakan"),
                                             ),
                                           ],
                                         ),

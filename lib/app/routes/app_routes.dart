@@ -10,6 +10,7 @@ abstract class Routes {
   static const PROGRAM = _Paths.PROGRAM;
   static const MAIN = _Paths.MAIN;
   static const STRETCHING = _Paths.STRETCHING;
+  static const STRETCHING_DETAIL = _Paths.STRETCHING_DETAIL;
   static const PROFILE = _Paths.PROFILE;
   static const EDUCATION = _Paths.EDUCATION;
   static const MOOD_CHECK = _Paths.MOOD_CHECK;
@@ -27,6 +28,7 @@ abstract class _Paths {
   static const PROGRAM = '/program';
   static const MAIN = '/main';
   static const STRETCHING = '/stretching';
+  static const STRETCHING_DETAIL = '/stretching-detail';
   static const PROFILE = '/profile';
   static const EDUCATION = '/education';
   static const MOOD_CHECK = '/mood-check';

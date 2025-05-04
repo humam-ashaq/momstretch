@@ -1,6 +1,12 @@
 import 'package:get/get.dart';
 
 class EducationController extends GetxController {
+  
+  @override
+  void onInit() {
+    super.onInit();
+  }
+  
   final List<Map<String, String>> educations = [
     {
       'title': 'Postpartum Diet',
@@ -34,7 +40,10 @@ class EducationController extends GetxController {
     },
   ];
 
+  final selectedEducation = Rxn<Map<String, String>>();
+
   void onEducationTap(int index) {
-    Get.toNamed('/education-detail', arguments: educations[index]);
+    selectedEducation.value = educations[index];
+    Get.toNamed('/education-detail');
   }
 }

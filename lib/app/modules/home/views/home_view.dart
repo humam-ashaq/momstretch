@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mom_stretch/app/data/app_colors.dart';
+import 'package:mom_stretch/app/modules/main/controllers/main_controller.dart';
 import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
@@ -47,10 +48,12 @@ class HomeView extends GetView<HomeController> {
                             // Explore Button
                             ElevatedButton(
                               onPressed: () {
-                                Get.toNamed('/stretching');
+                                final mainController =
+                                    Get.find<MainController>();
+                                mainController.navigateToStretching();
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF52463B),
+                                backgroundColor: AppColors.primaryColor,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(30),
                                 ),
@@ -95,7 +98,9 @@ class HomeView extends GetView<HomeController> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 80,)
+                    const SizedBox(
+                      height: 80,
+                    )
                   ],
                 ),
               ),
@@ -104,21 +109,23 @@ class HomeView extends GetView<HomeController> {
           Positioned(
             left: 24,
             right: 24,
-            bottom: 24,
-            child: GestureDetector(
-              onTap: controller.onHealthTestPressed,
+            bottom: 16,
+            child: ElevatedButton(
+              onPressed: () {
+                final mainController = Get.find<MainController>();
+                mainController.navigateToMoodCheck();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.forthColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
+              
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: AppColors.forthColor,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    )
-                  ],
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -128,13 +135,15 @@ class HomeView extends GetView<HomeController> {
                       children: [
                         Text(
                           'Health Test',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: TextStyle(fontWeight: FontWeight.bold,
+                          color: AppColors.primaryColor),
                         ),
                         SizedBox(height: 4),
-                        Text('Detect baby blues with EPDS'),
+                        Text('Detect baby blues with EPDS',style: TextStyle(
+                          color: AppColors.primaryColor),),
                       ],
                     ),
-                    Icon(Icons.arrow_forward_ios, size: 16),
+                    Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.primaryColor,),
                   ],
                 ),
               ),

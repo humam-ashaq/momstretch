@@ -3,6 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:mom_stretch/app/data/app_colors.dart';
 
 class HomeController extends GetxController {
+
+  @override
+  void onInit() {
+    super.onInit();
+  }
+  
   final articles = [
     {
       'image': 'assets/images/berita.png',
@@ -83,9 +89,5 @@ class HomeController extends GetxController {
         ),
       ],
     );
-  }
-
-  void onHealthTestPressed() {
-    Get.toNamed('/health-test'); // arahkan ke halaman Health Test
   }
 }

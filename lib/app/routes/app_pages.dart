@@ -1,4 +1,6 @@
 import 'package:get/get.dart';
+import 'package:mom_stretch/app/modules/education/views/education_detail_view.dart';
+import 'package:mom_stretch/app/modules/mood_check/views/epds_onboarding_view.dart';
 
 import '../modules/auth/forgot_password/views/forgot_password_checkemail_view.dart';
 import '../modules/auth/forgot_password/views/forgot_password_newpassword_view.dart';
@@ -15,6 +17,7 @@ import '../modules/home/views/home_view.dart';
 import '../modules/main/bindings/main_binding.dart';
 import '../modules/main/views/main_view.dart';
 import '../modules/mood_check/bindings/mood_check_binding.dart';
+import '../modules/mood_check/views/epds_test_view.dart';
 import '../modules/mood_check/views/mood_check_view.dart';
 import '../modules/profile/bindings/profile_binding.dart';
 import '../modules/profile/views/profile_view.dart';
@@ -85,8 +88,23 @@ class AppPages {
       binding: EducationBinding(),
     ),
     GetPage(
+      name: _Paths.EDUCATION_DETAIL,
+      page: () => EducationDetailView(),
+      binding: EducationBinding(),
+    ),
+    GetPage(
       name: _Paths.MOOD_CHECK,
       page: () => MoodCheckView(),
+      binding: MoodCheckBinding(),
+    ),
+    GetPage(
+      name: _Paths.EPDS_ONBOARD,
+      page: () => EpdsOnboardingView(),
+      binding: MoodCheckBinding(),
+    ),
+    GetPage(
+      name: _Paths.EPDS_TEST,
+      page: () => EpdsTestView(),
       binding: MoodCheckBinding(),
     ),
     GetPage(

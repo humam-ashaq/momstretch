@@ -34,13 +34,15 @@ class MoodCheckView extends GetView<MoodCheckController> {
                         const Text(
                           'Take EPDS test',
                           style: TextStyle(
-                              fontSize: 22, fontWeight: FontWeight.bold),
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.primaryColor
+                            ),
                         ),
                         const SizedBox(height: 16),
                         GestureDetector(
                           onTap: () {
-                            // Arahkan ke halaman test EPDS
-                            Get.toNamed('/epds-test');
+                            Get.toNamed('/epds-onb');
                           },
                           child: Container(
                             padding: const EdgeInsets.all(16),
@@ -78,7 +80,10 @@ class MoodCheckView extends GetView<MoodCheckController> {
                         const Text(
                           'Results',
                           style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.primaryColor
+                            ),
                         ),
                         const SizedBox(height: 12),
                         Obx(() => Container(
@@ -94,10 +99,17 @@ class MoodCheckView extends GetView<MoodCheckController> {
                                     'EPDS Score : ${controller.epdsScore.value}',
                                     style: const TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 14),
+                                        fontSize: 14,
+                                        color: AppColors.primaryColor
+                                      ),
                                   ),
                                   const SizedBox(height: 4),
-                                  Text(controller.epdsResult),
+                                  Text(
+                                    controller.epdsResult,
+                                    style: TextStyle(
+                                      color: AppColors.primaryColor
+                                    ),
+                                  ),
                                 ],
                               ),
                             )),
@@ -122,7 +134,10 @@ class MoodCheckView extends GetView<MoodCheckController> {
                       const Text(
                         'History',
                         style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.primaryColor
+                          ),
                       ),
                       const SizedBox(height: 12),
                       Container(
@@ -136,7 +151,10 @@ class MoodCheckView extends GetView<MoodCheckController> {
                           children: [
                             const Text(
                               'EPDS Score',
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.primaryColor
+                              ),
                             ),
                             const SizedBox(height: 8),
                             SizedBox(

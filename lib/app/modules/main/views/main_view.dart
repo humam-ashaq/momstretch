@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../data/app_colors.dart';
 import '../controllers/main_controller.dart';
-// import 'artikel_view.dart';
-// import 'profile_view.dart';
 
 class MainView extends GetView<MainController> {
 
@@ -24,6 +22,7 @@ class MainView extends GetView<MainController> {
               )
             ]),
             child: AppBar(
+              automaticallyImplyLeading: false,
               backgroundColor: Colors.white,
               elevation: 0,
               title: Padding(

@@ -4,6 +4,12 @@ import 'package:get/get.dart';
 import '../views/stretching_detail_sheet.dart';
 
 class StretchingController extends GetxController {
+
+  @override
+  void onInit() {
+    super.onInit();
+  }
+
   // List stretching yang tersedia
   final stretchingList = <Map<String, String>>[
     {

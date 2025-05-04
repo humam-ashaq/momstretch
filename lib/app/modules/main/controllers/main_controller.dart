@@ -12,9 +12,18 @@ class MainController extends GetxController {
     EducationView(),
     MoodCheckView(),
   ];
+  
   var currentIndex = 0.obs;
 
   void changePage(int index) {
     currentIndex.value = index;
+  }
+
+  void navigateToStretching() {
+    changePage(1); // Asumsikan StretchingView berada di indeks 1
+  }
+
+  void navigateToMoodCheck() {
+    changePage(3);
   }
 }

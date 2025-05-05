@@ -1,17 +1,32 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:get_storage/get_storage.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AuthService {
   static final box = GetStorage();
-  static const baseUrl =
-      'https://externally-popular-adder.ngrok-free.app'; // Ganti IP server kamu
+  static final baseUrl = dotenv.env['BASE_URL'] ?? '';
+  static final apiKey = dotenv.env['API_KEY'] ?? '';
+
+  static Map<String, String> getHeaders({bool withAuth = false}) {
+    final headers = {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+    };
+    if (withAuth) {
+      final token = box.read('token');
+      if (token != null) {
+        headers['Authorization'] = 'Bearer $token';
+      }
+    }
+    return headers;
+  }
 
   static Future<Map<String, dynamic>> register(
       String email, String password, String nama) async {
     final response = await http.post(
       Uri.parse('$baseUrl/register'),
-      headers: {'Content-Type': 'application/json'},
+      headers: getHeaders(),
       body: json.encode({
         'email': email,
         'password': password,
@@ -33,7 +48,7 @@ class AuthService {
       String email, String password) async {
     final response = await http.post(
       Uri.parse('$baseUrl/login'),
-      headers: {'Content-Type': 'application/json'},
+      headers: getHeaders(),
       body: json.encode({
         'email': email,
         'password': password,
@@ -54,14 +69,9 @@ class AuthService {
   }
 
   static Future<Map<String, dynamic>> getProfile() async {
-    final token = box.read('token');
-    print("Token di getProfile: $token"); // Debugging
     final response = await http.get(
       Uri.parse('$baseUrl/profile'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
+      headers: getHeaders(withAuth: true),
     );
 
     if (response.statusCode == 200) {
@@ -77,13 +87,9 @@ class AuthService {
 
   static Future<Map<String, dynamic>> updateProfile(
       String usia, String fotoProfil) async {
-    final token = box.read('token');
     final response = await http.put(
       Uri.parse('$baseUrl/profile'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
+      headers: getHeaders(withAuth: true),
       body: json.encode({
         'usia': usia,
         'foto_profil': fotoProfil,
@@ -104,7 +110,7 @@ class AuthService {
   }
 
   static void logout() {
-    box.remove('token'); // Bersihkan semua data
+    box.remove('token');
   }
 
   static bool isLoggedIn() {

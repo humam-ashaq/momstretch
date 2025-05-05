@@ -112,7 +112,7 @@ class ProfileView extends GetView<ProfileController> {
                       }),
                       Divider(color: Colors.white),
                       menuTile(Icons.info_outline, 'Tentang Aplikasi', () {
-                        // Navigasi tentang aplikasi
+                        Get.toNamed('/about');
                       }),
                       Divider(color: Colors.white),
                       menuTile(Icons.logout, 'Keluar', () {

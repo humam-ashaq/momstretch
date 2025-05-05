@@ -24,6 +24,7 @@ abstract class Routes {
   static const FORGOT_RESET = _Paths.FORGOT_RESET;
   static const REMINDER = _Paths.REMINDER;
   static const ARTICLE = _Paths.ARTICLE;
+  static const ABOUT = _Paths.ABOUT;
 }
 
 abstract class _Paths {
@@ -49,4 +50,5 @@ abstract class _Paths {
   static const FORGOT_RESET = '/forgot-reset';
   static const REMINDER = '/reminder';
   static const ARTICLE = '/article';
+  static const ABOUT = '/about';
 }

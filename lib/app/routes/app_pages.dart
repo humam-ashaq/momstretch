@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 
+import '../modules/about/bindings/about_binding.dart';
+import '../modules/about/views/about_view.dart';
 import '../modules/article/bindings/article_binding.dart';
 import '../modules/article/views/articel_view.dart';
 import '../modules/auth/forgot_password/bindings/forgot_password_binding.dart';
@@ -145,8 +147,13 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.ARTICLE,
-      page: () => const ArticleView(),
+      page: () => ArticleView(),
       binding: ArticleBinding(),
+    ),
+    GetPage(
+      name: _Paths.ABOUT,
+      page: () => AboutView(),
+      binding: AboutBinding(),
     ),
   ];
 }

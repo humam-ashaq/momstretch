@@ -10,9 +10,13 @@ class EpdsTestView extends GetView<MoodCheckController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(title: const Text('Tes EPDS', style: TextStyle(
-        color: AppColors.primaryColor
-      ),), backgroundColor: Colors.white,),
+      appBar: AppBar(
+        title: const Text(
+          'Tes EPDS',
+          style: TextStyle(color: AppColors.primaryColor),
+        ),
+        backgroundColor: Colors.white,
+      ),
       body: SafeArea(
         child: Obx(() => controller.isSubmitted.value
             ? _buildResult(controller)
@@ -42,16 +46,33 @@ class EpdsTestView extends GetView<MoodCheckController> {
                     Text(
                       '${index + 1}. ${question['question']}',
                       style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.primaryColor),
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primaryColor),
                     ),
                     ...List.generate((question['options'] as List).length,
                         (optIndex) {
                       final option = question['options'][optIndex];
                       return Obx(() => RadioListTile(
-                            title: Text(option['text'], style: TextStyle(color: AppColors.primaryColor,)),
+                            title: Text(option['text'],
+                                style: TextStyle(
+                                  color: AppColors.primaryColor,
+                                )),
                             value: optIndex,
                             groupValue: controller.answers[index],
-                            onChanged: (val) => controller.setAnswer(index, val as int),
+                            activeColor: AppColors.primaryColor,
+                            fillColor: WidgetStateProperty.resolveWith<Color>(
+                              (states) {
+                                if (states.contains(WidgetState.selected)) {
+                                  return AppColors
+                                      .primaryColor; // isi lingkaran saat dipilih
+                                }
+                                return Colors
+                                    .grey; // warna lingkaran saat tidak dipilih
+                              },
+                            ),
+                            onChanged: (val) =>
+                                controller.setAnswer(index, val as int),
                           ));
                     }),
                     const SizedBox(height: 20),
@@ -61,10 +82,11 @@ class EpdsTestView extends GetView<MoodCheckController> {
             ),
           ),
           ElevatedButton(
-            onPressed: controller.allAnswered
-                ? controller.submitAnswers
-                : null,
-            child: const Text('Kirim'),
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryColor),
+            onPressed: controller.allAnswered ? controller.submitAnswers : null,
+            child: const Text('Kirim', style: TextStyle(
+              color: Colors.white,
+            ),),
           ),
         ],
       ),
@@ -82,8 +104,11 @@ class EpdsTestView extends GetView<MoodCheckController> {
           Text(controller.epdsResult, style: const TextStyle(fontSize: 18)),
           const SizedBox(height: 20),
           ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryColor),
             onPressed: () => Get.offNamed('/main'),
-            child: const Text('Kembali'),
+            child: const Text('Kembali', style: TextStyle(
+              color: Colors.white
+            ),),
           ),
         ],
       ),

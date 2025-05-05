@@ -9,19 +9,22 @@ class StretchingController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    if (selectedProgram.value == null && programList.isNotEmpty) {
+      selectedProgram.value = programList.first; // atau nilai default lain
+    }
   }
 
   // List stretching yang tersedia
   final stretchingList = <Map<String, String>>[
     {
       'image': 'assets/images/pose2.png',
-      'title': 'Senam Perut',
+      'title': 'Senam Nifas',
       'level': 'Pemula',
       'duration': '23 menit',
     },
     {
       'image': 'assets/images/pose1.png',
-      'title': 'Pose Kupu-Kupu',
+      'title': 'Senam Diastasis Recti',
       'level': 'Pemula',
       'duration': '20 menit',
     },
@@ -39,7 +42,7 @@ class StretchingController extends GetxController {
   ];
 
   final Map<String, List<Map<String, String>>> movementsByStretchingType = {
-    'Senam Perut': [
+    'Senam Nifas': [
       {
         'image': 'assets/images/yoga.png',
         'title': 'Slide Out',
@@ -80,7 +83,7 @@ Slide Out:
         ''',
       },
     ],
-    'Pose Kupu-Kupu': [
+    'Senam Diastasis Recti': [
       {
         'image': 'assets/images/yoga.png',
         'title': 'Butterfly Stretch',
@@ -203,7 +206,7 @@ Perkuatan otot dasar panggul secara bertahap
     ]);
   }
 
-  void goToStretchingCamera() async{
+  void goToStretchingCamera() async {
     await initializeCamera(); // pastikan kamera siap sebelum pindah
     Get.toNamed('/stretching-cam');
   }

@@ -29,7 +29,7 @@ class HomeController extends GetxController {
   }
 
   void onReadNowPressed() {
-    Get.toNamed('/article-detail');
+    Get.toNamed('/article');
   }
 
   void onViewAllPressed() {
@@ -82,7 +82,9 @@ class HomeController extends GetxController {
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-                child: const Text('Baca Sekarang'),
+                child: const Text('Baca Sekarang', style: TextStyle(
+                  color: AppColors.primaryColor
+                ),),
               ),
             ],
           ),

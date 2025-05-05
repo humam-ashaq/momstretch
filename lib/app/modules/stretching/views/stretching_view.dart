@@ -31,19 +31,28 @@ class StretchingView extends GetView<StretchingController> {
               Obx(() => DropdownButtonFormField<String>(
                     value: controller.selectedProgram.value,
                     decoration: InputDecoration(
-                      hintText: "Pilih Program Stretching",
-                      border: OutlineInputBorder(
+                      filled: true,
+                      fillColor: Colors.white,
+                      enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: AppColors.primaryColor, width: 1.5),
                       ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: AppColors.tertiaryColor, width: 2),
+                      )
                     ),
                     items: controller.programList.map((program) {
                       return DropdownMenuItem(
                         value: program,
-                        child: Text(program, style: const TextStyle(color: AppColors.primaryColor)),
+                        child: Text(program,
+                            style:
+                                const TextStyle(color: AppColors.primaryColor)),
                       );
                     }).toList(),
                     onChanged: (value) {
-                      controller.selectedProgram.value = value;
+                      if (value != null)
+                        controller.selectedProgram.value = value;
                     },
                   )),
 
@@ -105,47 +114,10 @@ class StretchingView extends GetView<StretchingController> {
                                         const SizedBox(height: 8),
                                         Row(
                                           children: [
-                                            Container(
-                                              padding: const EdgeInsets.symmetric(
-                                                  horizontal: 12, vertical: 4),
-                                              decoration: BoxDecoration(
-                                                color: Colors.white70,
-                                                borderRadius:
-                                                    BorderRadius.circular(6),
-                                              ),
-                                              child: Row(
-                                                children: [
-                                                  const Icon(Icons.timer, size: 16),
-                                                  const SizedBox(width: 4),
-                                                  Text(item['duration'] ?? '',
-                                                      style: const TextStyle(
-                                                          fontSize: 12)),
-                                                ],
-                                              ),
-                                            ),
-                                            const SizedBox(width: 12),
-                                            Container(
-                                              padding: const EdgeInsets.symmetric(
-                                                  horizontal: 12, vertical: 4),
-                                              decoration: BoxDecoration(
-                                                color: Colors.white70,
-                                                borderRadius:
-                                                    BorderRadius.circular(6),
-                                              ),
-                                              child: Row(
-                                                children: [
-                                                  const Icon(Icons.flag, size: 16),
-                                                  const SizedBox(width: 4),
-                                                  Text(item['level'] ?? '',
-                                                      style: const TextStyle(
-                                                          fontSize: 12)),
-                                                ],
-                                              ),
-                                            ),
-                                            const Spacer(),
                                             ElevatedButton(
                                               onPressed: () {
-                                                controller.goToStretchingDetail(item);
+                                                controller
+                                                    .goToStretchingDetail(item);
                                               },
                                               style: ElevatedButton.styleFrom(
                                                 backgroundColor:

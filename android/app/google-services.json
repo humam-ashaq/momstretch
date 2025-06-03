@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1071557902702",
+    "project_id": "momstretch-d92d1",
+    "storage_bucket": "momstretch-d92d1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1071557902702:android:e48c007e1bad9cbef6417f",
+        "android_client_info": {
+          "package_name": "www.humem.com.mom_stretch"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1071557902702-9b6i8r857u6kkllt54ete4e7ape37obo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "www.humem.com.mom_stretch",
+            "certificate_hash": "6f730755b29cbf93ca803717723d8d1e58004068"
+          }
+        },
+        {
+          "client_id": "1071557902702-ljtdqcfon5fc3139c0ggoe8harnhljge.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTrd3LNgOaH03sJaODaufsoRtc7IXeKDY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1071557902702-ljtdqcfon5fc3139c0ggoe8harnhljge.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

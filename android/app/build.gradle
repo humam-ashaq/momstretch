@@ -1,6 +1,7 @@
 plugins {
     id "com.android.application"
     id "kotlin-android"
+    id 'com.google.gms.google-services'
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id "dev.flutter.flutter-gradle-plugin"
 }
@@ -9,16 +10,16 @@ android {
     namespace = "www.humem.com.mom_stretch"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
-
+    
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
-
+    
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8
     }
-
+    
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "www.humem.com.mom_stretch"
@@ -28,8 +29,11 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        
+        // Tambahkan ini untuk multidex support
+        multiDexEnabled true
     }
-
+    
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
@@ -41,4 +45,10 @@ android {
 
 flutter {
     source = "../.."
+}
+
+// TAMBAHKAN SECTION DEPENDENCIES INI DI BAGIAN PALING BAWAH
+dependencies {
+    implementation "androidx.multidex:multidex:2.0.1"
+    // Firebase dependencies akan ditambahkan otomatis oleh Flutter
 }

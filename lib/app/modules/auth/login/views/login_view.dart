@@ -142,34 +142,51 @@ class LoginView extends GetView<LoginController> {
               ),
               const SizedBox(height: 20),
               Center(
-                child: Obx(() => ElevatedButton(
-                      onPressed:
-                          controller.isLoading.value ? null : controller.login,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: mainColor,
-                        minimumSize: Size(double.infinity, 50),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
+                  child: Obx(() => ElevatedButton(
+                        onPressed: controller.isLoading.value
+                            ? null
+                            : controller.login,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: mainColor,
+                          minimumSize: Size(double.infinity, 50),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
                         ),
-                      ),
-                      child: controller.isLoading.value
-                          ? const SizedBox(
-                              height: 24,
-                              width: 24,
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 2,
+                        child: controller.isLoading.value
+                            ? const SizedBox(
+                                height: 24,
+                                width: 24,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Text(
+                                'MASUK',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
                               ),
-                            )
-                          : const Text(
-                              'MASUK',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                    )),
+                      )),),
+              Center(
+                child: Obx(() => ElevatedButton.icon(
+                        onPressed: controller.isLoading.value
+                            ? null
+                            : controller.loginWithGoogle,
+                        icon: Icon(Icons.login),
+                        label: Text('Masuk dengan Google'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          foregroundColor: Colors.white,
+                          minimumSize: Size(double.infinity, 50),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                      ))
               )
             ],
           ),

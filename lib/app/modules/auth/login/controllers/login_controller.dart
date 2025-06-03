@@ -48,6 +48,26 @@ class LoginController extends GetxController {
     }
   }
 
+  Future<void> loginWithGoogle() async {
+    isLoading.value = true;
+
+    final result = await AuthService.signInWithGoogle();
+
+    isLoading.value = false;
+
+    if (result['success']) {
+      showCustomSnackbar('Sukses', result['message'],
+          backgroundColor: Colors.green);
+      print('Token dari Google Login: ${AuthService.box.read('token')}');
+
+      await Future.delayed(Duration(seconds: 1));
+      Get.offAllNamed('/program'); // arahkan ke halaman setelah login sukses
+    } else {
+      showCustomSnackbar('Error', result['message'],
+          backgroundColor: Colors.red);
+    }
+  }
+
   @override
   void onClose() {
     emailC.dispose();

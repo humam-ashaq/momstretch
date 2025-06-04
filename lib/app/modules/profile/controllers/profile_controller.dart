@@ -11,8 +11,6 @@ class ProfileController extends GetxController {
   var usia = ''.obs;
   var fotoProfil = ''.obs;
   var isLoading = true.obs;
-  var logout = AuthService.logout();
-
   final usiaC = TextEditingController();
   final fotoProfilC = TextEditingController();
 
@@ -23,6 +21,8 @@ class ProfileController extends GetxController {
   }
 
   Future<void> fetchProfile() async {
+    final token = AuthService.getToken();
+    print('Token fetch: ${token}');
     isLoading.value = true;
     final result = await AuthService.getProfile();
     if (result['success']) {
@@ -32,7 +32,7 @@ class ProfileController extends GetxController {
       usia.value = data['usia']?.toString() ?? '';
       fotoProfil.value = data['foto_profil'] ?? '';
 
-      // Update controllers dengan data yang ada
+      // Update controllers dengan data yang ada.
       usiaC.text = usia.value;
       fotoProfilC.text = fotoProfil.value;
     }

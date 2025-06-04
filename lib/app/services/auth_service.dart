@@ -6,7 +6,25 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
-  static final box = GetStorage();
+  static final GetStorage _box = GetStorage();
+
+  // Simpan token
+  static Future<void> saveToken(String token) async {
+    await _box.write('token', token);
+    print('Token saved: $token');
+
+    // Verifikasi langsung
+    final savedToken = _box.read('token');
+    print('Verification - token from storage: $savedToken');
+  }
+
+  // Ambil token
+  static String? getToken() {
+    final token = _box.read('token');
+    print('Getting token: $token');
+    return token;
+  }
+
   static final baseUrl = dotenv.env['BASE_URL'] ?? '';
   static final apiKey = dotenv.env['API_KEY'] ?? '';
 
@@ -20,12 +38,20 @@ class AuthService {
       'Content-Type': 'application/json',
       'x-api-key': apiKey,
     };
+
     if (withAuth) {
-      final token = box.read('token');
+      final token = getToken();
+      print('Token from storage: $token'); // Debug
+
       if (token != null) {
         headers['Authorization'] = 'Bearer $token';
+        print('Authorization header added'); // Debug
+      } else {
+        print('WARNING: Token is null!'); // Debug
       }
     }
+
+    print('Final headers: $headers'); // Debug
     return headers;
   }
 
@@ -70,8 +96,30 @@ class AuthService {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        await box.write('token', data['token']);
-        await box.write('nama', data['nama']);
+        final token = data['token'];
+
+        print('=== LOGIN SUCCESS DEBUG ===');
+        print('Token received from backend: $token');
+        print('Token type: ${token.runtimeType}');
+        print('Token length: ${token?.length}');
+
+        await saveToken(token);
+
+        // Test baca langsung setelah simpan
+        final testRead1 = getToken();
+        print('Test read 1 (immediately after save): $testRead1');
+
+        await Future.delayed(Duration(milliseconds: 100));
+        final testRead2 = getToken();
+        print('Test read 2 (after 100ms): $testRead2');
+
+        // Test langsung dari storage
+        final directRead = _box.read('token');
+        print('Direct storage read: $directRead');
+      
+        print('========================');
+
+        await _box.write('nama', data['nama']);
         return {'success': true, 'message': 'Login berhasil'};
       } else {
         return {
@@ -248,8 +296,9 @@ class AuthService {
           return {'success': false, 'message': 'Respons server tidak valid'};
         }
 
-        await box.write('token', data['token']);
-        await box.write('nama', data['nama']);
+        await saveToken(data['token']);
+        print('Token: ${getToken}');
+        await _box.write('nama', data['nama']);
 
         print('Google login successful');
         return {'success': true, 'message': 'Login Google berhasil'};
@@ -339,10 +388,16 @@ class AuthService {
 
   static Future<Map<String, dynamic>> getProfile() async {
     try {
+      final headers = getHeaders(withAuth: true);
+      print('Request headers: $headers'); // debugging
+
       final response = await http.get(
         Uri.parse('$baseUrl/profile'),
-        headers: getHeaders(withAuth: true),
+        headers: headers,
       );
+
+      print('Response status: ${response.statusCode}'); // debugging
+      print('Response body: ${response.body}'); // debugging
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -396,8 +451,8 @@ class AuthService {
 
   static Future<void> logout() async {
     try {
-      box.remove('token');
-      box.remove('nama');
+      _box.remove('token');
+      _box.remove('nama');
 
       // Sign out from Google and Firebase
       await _googleSignIn.signOut();
@@ -408,6 +463,6 @@ class AuthService {
   }
 
   static bool isLoggedIn() {
-    return box.hasData('token');
+    return _box.hasData('token');
   }
 }

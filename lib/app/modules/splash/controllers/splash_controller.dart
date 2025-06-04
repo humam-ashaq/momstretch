@@ -29,7 +29,7 @@ class SplashController extends GetxController with GetTickerProviderStateMixin {
   }
 
   void _checkLogin() {
-    final token = AuthService.box.read('token');
+    final token = AuthService.getToken();
     print('token: ${token}');
     if (token != null && token.isNotEmpty) {
       Get.offAllNamed('/main'); // Kalau sudah login, ke halaman home

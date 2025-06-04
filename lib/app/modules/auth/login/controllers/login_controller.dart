@@ -37,11 +37,16 @@ class LoginController extends GetxController {
     if (result['success']) {
       showCustomSnackbar('Sukses', result['message'],
           backgroundColor: Colors.green);
-      print('Token yang disimpan di box: ${AuthService.box.read('token')}');
-      print('TOKEN YANG DIKIRIM: ${AuthService.box.read('token')}');
+      print('Token yang disimpan di box: ${AuthService.getToken()}');
+      print('TOKEN YANG DIKIRIM: ${AuthService.getToken()}');
 
       await Future.delayed(Duration(seconds: 1));
       Get.offAllNamed('/program'); // arahkan ke home setelah login
+      
+      // Test token setelah navigate
+      await Future.delayed(Duration(milliseconds: 500));
+      final token2 = AuthService.getToken();
+      print('Token after navigate: $token2');
     } else {
       showCustomSnackbar('Error', result['message'],
           backgroundColor: Colors.red);
@@ -58,7 +63,7 @@ class LoginController extends GetxController {
     if (result['success']) {
       showCustomSnackbar('Sukses', result['message'],
           backgroundColor: Colors.green);
-      print('Token dari Google Login: ${AuthService.box.read('token')}');
+      print('Token dari Google Login: ${AuthService.getToken()}');
 
       await Future.delayed(Duration(seconds: 1));
       Get.offAllNamed('/program'); // arahkan ke halaman setelah login sukses

@@ -12,9 +12,7 @@ class ProfileView extends GetView<ProfileController> {
       appBar: PreferredSize(
           preferredSize: Size.fromHeight(60),
           child: Container(
-            decoration: BoxDecoration(
-              
-              boxShadow: [
+            decoration: BoxDecoration(boxShadow: [
               BoxShadow(
                 color: Colors.black12,
                 offset: const Offset(0, 1),
@@ -31,7 +29,10 @@ class ProfileView extends GetView<ProfileController> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     IconButton(
-                      icon: Icon(Icons.arrow_back_ios, color: AppColors.primaryColor,),
+                      icon: Icon(
+                        Icons.arrow_back_ios,
+                        color: AppColors.primaryColor,
+                      ),
                       onPressed: () => Get.back(),
                     ),
                     Text(
@@ -45,7 +46,10 @@ class ProfileView extends GetView<ProfileController> {
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.edit, color: Colors.white,),
+                      icon: const Icon(
+                        Icons.edit,
+                        color: Colors.white,
+                      ),
                       onPressed: () {
                         Get.to(() => ProfileEditView());
                       },
@@ -54,8 +58,7 @@ class ProfileView extends GetView<ProfileController> {
                 ),
               ),
             ),
-          )
-        ),
+          )),
       body: Obx(() {
         if (controller.isLoading.value) {
           return const Center(child: CircularProgressIndicator());
@@ -64,39 +67,63 @@ class ProfileView extends GetView<ProfileController> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              CircleAvatar(
-                radius: 50,
-                backgroundImage: controller.fotoProfil.value.isNotEmpty
-                    ? NetworkImage(controller.fotoProfil.value)
-                    : const AssetImage('assets/images/default_profile.jpg')
-                        as ImageProvider,
-              ),
-              Text(
-                "Asih Rahmawati",
-                style: TextStyle(
-                  fontSize: 24,
-                  color: AppColors.primaryColor
-                ),
-              ),
-              Text(
-                'asihra123@gmail.com',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: AppColors.primaryColor
-                ),
-              ),
+              // Profile Picture - Dynamic
+              Obx(() => CircleAvatar(
+                    radius: 50,
+                    backgroundImage: controller.fotoProfil.value.isNotEmpty
+                        ? NetworkImage(controller.fotoProfil.value)
+                        : const AssetImage('assets/images/default_profile.jpg')
+                            as ImageProvider,
+                  )),
+
+              // Name - Dynamic
+              Obx(() => Text(
+                    controller.nama.value.isNotEmpty
+                        ? controller.nama.value
+                        : "Nama Pengguna",
+                    style:
+                        TextStyle(fontSize: 24, color: AppColors.primaryColor),
+                  )),
+
+              // Email - Dynamic
+              Obx(() => Text(
+                    controller.email.value.isNotEmpty
+                        ? controller.email.value
+                        : "email@example.com",
+                    style:
+                        TextStyle(fontSize: 16, color: AppColors.primaryColor),
+                  )),
+
               const SizedBox(height: 16),
               ListTile(
-                leading: const Icon(Icons.book, color: AppColors.primaryColor,),
-                title: Text('Persalinan Normal', style: TextStyle(color: AppColors.primaryColor),),
-                subtitle: const Text('Program Stretching', style: TextStyle(color: AppColors.primaryColor),),
+                leading: const Icon(
+                  Icons.book,
+                  color: AppColors.primaryColor,
+                ),
+                title: Text(
+                  'Persalinan Normal',
+                  style: TextStyle(color: AppColors.primaryColor),
+                ),
+                subtitle: const Text(
+                  'Program Stretching',
+                  style: TextStyle(color: AppColors.primaryColor),
+                ),
               ),
-              ListTile(
-                leading: const Icon(Icons.cake, color: AppColors.primaryColor,),
-                title: Text('26 Tahun', style: TextStyle(color: AppColors.primaryColor),),
-                subtitle: const Text('Usia', style: TextStyle(color: AppColors.primaryColor),),
+              // Age - Dynamic
+              Obx(() => ListTile(
+                    leading:
+                        const Icon(Icons.cake, color: AppColors.primaryColor),
+                    title: Text(
+                        controller.usia.value.isNotEmpty
+                            ? '${controller.usia.value} Tahun'
+                            : 'Usia Belum Diisi',
+                        style: TextStyle(color: AppColors.primaryColor)),
+                    subtitle: const Text('Usia',
+                        style: TextStyle(color: AppColors.primaryColor)),
+                  )),
+              const SizedBox(
+                height: 16,
               ),
-              const SizedBox(height: 16,),
               Container(
                 margin: EdgeInsets.symmetric(horizontal: 20),
                 padding: EdgeInsets.all(16),
@@ -105,22 +132,22 @@ class ProfileView extends GetView<ProfileController> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      menuTile(Icons.edit, 'Ubah Profil', () {
-                        Get.toNamed('/profile-edit');
-                      }),
-                      Divider(color: Colors.white),
-                      menuTile(Icons.info_outline, 'Tentang Aplikasi', () {
-                        Get.toNamed('/about');
-                      }),
-                      Divider(color: Colors.white),
-                      menuTile(Icons.logout, 'Keluar', () {
-                        controller.performLogout();
-                      }),                      
-                    ],
-                  ),
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    menuTile(Icons.edit, 'Ubah Profil', () {
+                      Get.toNamed('/profile-edit');
+                    }),
+                    Divider(color: Colors.white),
+                    menuTile(Icons.info_outline, 'Tentang Aplikasi', () {
+                      Get.toNamed('/about');
+                    }),
+                    Divider(color: Colors.white),
+                    menuTile(Icons.logout, 'Keluar', () {
+                      controller.performLogout();
+                    }),
+                  ],
                 ),
+              ),
             ],
           ),
         );
@@ -133,7 +160,8 @@ Widget menuTile(IconData icon, String title, VoidCallback onTap) {
   return ListTile(
     leading: Icon(icon, color: AppColors.primaryColor),
     title: Text(title, style: TextStyle(color: AppColors.primaryColor)),
-    trailing: Icon(Icons.arrow_forward_ios, color: AppColors.primaryColor, size: 16),
+    trailing:
+        Icon(Icons.arrow_forward_ios, color: AppColors.primaryColor, size: 16),
     onTap: onTap,
   );
 }

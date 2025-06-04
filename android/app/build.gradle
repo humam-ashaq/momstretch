@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "www.humem.com.mom_stretch"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 35
     ndkVersion = flutter.ndkVersion
     
     compileOptions {

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:get_storage/get_storage.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -9,9 +8,12 @@ import 'package:google_sign_in/google_sign_in.dart';
 class AuthService {
   static final box = GetStorage();
   static final baseUrl = dotenv.env['BASE_URL'] ?? '';
-  // static final baseUrl = "http://192.168.85.105:5000";
   static final apiKey = dotenv.env['API_KEY'] ?? '';
-  // static final apiKey = "cukurukuk";
+
+  // Initialize GoogleSignIn instance
+  static final GoogleSignIn _googleSignIn = GoogleSignIn(
+    scopes: ['email', 'profile'],
+  );
 
   static Map<String, String> getHeaders({bool withAuth = false}) {
     final headers = {
@@ -49,7 +51,7 @@ class AuthService {
         };
       }
     } catch (e) {
-      if (kDebugMode) print('Register error: $e');
+      print('Register error: $e');
       return {'success': false, 'message': 'Terjadi kesalahan saat registrasi'};
     }
   }
@@ -78,130 +80,260 @@ class AuthService {
         };
       }
     } catch (e) {
-      if (kDebugMode) print('Login error: $e');
+      print('Login error: $e');
       return {'success': false, 'message': 'Terjadi kesalahan saat login'};
     }
   }
 
   static Future<Map<String, dynamic>> signInWithGoogle() async {
     try {
-      // Pastikan Google Sign In dikonfigurasi dengan benar
-      if (kDebugMode) print('Starting Google Sign In...');
-      
-      final GoogleSignInAccount? googleUser = await GoogleSignIn(
-        // Tambahkan konfigurasi jika diperlukan
-        scopes: ['email', 'profile'],
-      ).signIn();
-      
+      print('Starting Google Sign In...');
+
+      // Sign out first to ensure clean state
+      await _googleSignIn.signOut();
+      await FirebaseAuth.instance.signOut();
+
+      // Start Google Sign In
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      print('googleUser result: $googleUser');
+
       if (googleUser == null) {
-        if (kDebugMode) print('Google sign in cancelled by user');
+        print('Google sign in cancelled by user');
         return {'success': false, 'message': 'Login Google dibatalkan'};
       }
 
-      if (kDebugMode) print('Google user signed in: ${googleUser.email}');
+      print('Google user signed in: ${googleUser.email}');
 
+      // Get authentication details
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
 
       if (googleAuth.accessToken == null || googleAuth.idToken == null) {
-        if (kDebugMode) print('Google auth tokens are null');
+        print('Google auth tokens are null');
         return {'success': false, 'message': 'Gagal mendapatkan token Google'};
       }
 
-      if (kDebugMode) print('Google auth tokens obtained');
+      print('Google auth tokens obtained');
 
+      // Create Firebase credential
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
-      // Sign in ke Firebase
-      if (kDebugMode) print('Signing in to Firebase...');
-      final userCredential =
-          await FirebaseAuth.instance.signInWithCredential(credential);
+      // Sign in to Firebase
+      print('Signing in to Firebase...');
+      // final UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
 
-      final user = userCredential.user;
+      // final user = userCredential.user;
+      UserCredential? userCredential;
+      User? user;
+
+      try {
+        userCredential =
+            await FirebaseAuth.instance.signInWithCredential(credential);
+        user = userCredential.user;
+      } catch (firebaseError) {
+        print('Firebase signInWithCredential error: $firebaseError');
+
+        // ALTERNATIF: Coba gunakan current user jika sign in gagal tapi user sudah ada
+        user = FirebaseAuth.instance.currentUser;
+
+        if (user == null) {
+          print('Firebase user is null after error');
+          return {
+            'success': false,
+            'message': 'Login Firebase gagal: $firebaseError'
+          };
+        } else {
+          print(
+              'Using current Firebase user after sign in error: ${user.email}');
+        }
+      }
+
       if (user == null) {
-        if (kDebugMode) print('Firebase user is null');
+        print('Firebase user is null');
         return {'success': false, 'message': 'Login Firebase gagal'};
       }
 
-      if (kDebugMode) print('Firebase user signed in: ${user.email}');
+      print('Firebase user signed in: ${user.email}');
 
-      // Ambil token ID dari Firebase
-      final firebaseToken = await user.getIdToken();
-      
-      if (firebaseToken == null || firebaseToken.isEmpty) {
-        if (kDebugMode) print('Firebase ID token is null or empty');
-        return {'success': false, 'message': 'Gagal mendapatkan token Firebase'};
+      // Get Firebase ID token with force refresh
+      print('Getting Firebase ID token...');
+      // final firebaseToken = await user.getIdToken(true);
+      String? firebaseToken;
+
+      try {
+        firebaseToken = await user.getIdToken(true);
+      } catch (tokenError) {
+        print('Error getting Firebase token: $tokenError');
+
+        // Coba tanpa force refresh
+        try {
+          firebaseToken = await user.getIdToken(false);
+        } catch (tokenError2) {
+          print('Error getting Firebase token (retry): $tokenError2');
+          return {
+            'success': false,
+            'message': 'Gagal mendapatkan token Firebase'
+          };
+        }
       }
 
-      if (kDebugMode) {
+      if (firebaseToken == null || firebaseToken.isEmpty) {
+        print('Firebase ID token is empty');
+        return {
+          'success': false,
+          'message': 'Gagal mendapatkan token Firebase'
+        };
+      }
+
+      {
         print('Firebase user: ${user.email}');
         print('Firebase ID Token length: ${firebaseToken.length}');
+        print('Base URL: $baseUrl');
+        print('API Key set: ${apiKey.isNotEmpty}');
       }
 
-      // Validasi baseUrl dan apiKey
-      if (baseUrl.isEmpty) {
-        if (kDebugMode) print('Base URL is empty');
-        return {'success': false, 'message': 'Konfigurasi server tidak ditemukan'};
+      // Test koneksi ke backend terlebih dahulu
+      try {
+        print('Testing backend connection...');
+        final testResponse = await http.get(
+          Uri.parse('$baseUrl/'),
+          headers: {'x-api-key': apiKey},
+        ).timeout(const Duration(seconds: 10));
+        print('Backend test status: ${testResponse.statusCode}');
+      } catch (e) {
+        print('Backend connection test failed: $e');
+        return {
+          'success': false,
+          'message':
+              'Tidak dapat terhubung ke server. Periksa koneksi internet Anda.'
+        };
       }
 
-      if (apiKey.isEmpty) {
-        if (kDebugMode) print('API Key is empty');
-        return {'success': false, 'message': 'Konfigurasi API Key tidak ditemukan'};
+      // Send token to backend dengan headers yang benar
+      print('Sending OAuth request to backend...');
+
+      {
+        print('Request URL: $baseUrl/login_oauth');
+        print('Request headers: ${getHeaders()}');
       }
 
-      // Kirim token ini ke backend
-      if (kDebugMode) print('Sending request to backend: $baseUrl/login_oauth');
-      
-      final response = await http.post(
+      final response = await http
+          .post(
         Uri.parse('$baseUrl/login_oauth'),
         headers: getHeaders(),
-        body: jsonEncode({'firebase_token': firebaseToken}),
-      ).timeout(
+        body: json.encode({'firebase_token': firebaseToken}),
+      )
+          .timeout(
         const Duration(seconds: 30),
         onTimeout: () {
-          throw Exception('Request timeout');
+          throw Exception(
+              'Request timeout - Server tidak merespons dalam 30 detik');
         },
       );
 
-      if (kDebugMode) {
+      {
         print('Response status: ${response.statusCode}');
+        print('Response headers: ${response.headers}');
         print('Response body: ${response.body}');
       }
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        
+
         if (data['token'] == null || data['nama'] == null) {
-          if (kDebugMode) print('Token or nama is null in response');
+          print('Token or nama is null in response');
           return {'success': false, 'message': 'Respons server tidak valid'};
         }
-        
+
         await box.write('token', data['token']);
         await box.write('nama', data['nama']);
 
-        if (kDebugMode) print('Google login successful');
+        print('Google login successful');
         return {'success': true, 'message': 'Login Google berhasil'};
+      } else if (response.statusCode == 403) {
+        print('API Key validation failed');
+        return {'success': false, 'message': 'Konfigurasi API tidak valid'};
+      } else if (response.statusCode >= 500) {
+        print('Server error: ${response.statusCode}');
+        return {
+          'success': false,
+          'message': 'Server sedang mengalami masalah. Coba lagi nanti.'
+        };
       } else {
-        final errorData = jsonDecode(response.body);
-        final msg = errorData['message'] ?? 'Login backend gagal';
-        if (kDebugMode) print('Backend error: $msg');
-        return {'success': false, 'message': msg};
+        try {
+          final errorData = jsonDecode(response.body);
+          final msg = errorData['message'] ?? 'Login backend gagal';
+          print('Backend error: $msg');
+          return {'success': false, 'message': msg};
+        } catch (e) {
+          print('Failed to parse error response: $e');
+          return {
+            'success': false,
+            'message': 'Terjadi kesalahan pada server (${response.statusCode})'
+          };
+        }
       }
     } on FirebaseAuthException catch (e) {
-      if (kDebugMode) print('Firebase Auth error: ${e.code} - ${e.message}');
-      return {'success': false, 'message': 'Error Firebase: ${e.message}'};
+      print('Firebase Auth error: ${e.code} - ${e.message}');
+
+      String errorMessage;
+      switch (e.code) {
+        case 'account-exists-with-different-credential':
+          errorMessage = 'Akun sudah ada dengan metode login yang berbeda';
+          break;
+        case 'invalid-credential':
+        case 'user-not-found':
+          errorMessage = 'Login gagal. Periksa akun Google Anda.';
+          break;
+        case 'operation-not-allowed':
+          errorMessage = 'Login Google tidak diaktifkan';
+          break;
+        case 'user-disabled':
+          errorMessage = 'Akun pengguna dinonaktifkan';
+          break;
+        case 'network-request-failed':
+          errorMessage = 'Periksa koneksi internet Anda';
+          break;
+        default:
+          errorMessage = 'Terjadi kesalahan saat login dengan Google';
+      }
+
+      return {'success': false, 'message': errorMessage};
     } on http.ClientException catch (e) {
-      if (kDebugMode) print('HTTP Client error: $e');
-      return {'success': false, 'message': 'Koneksi ke server gagal'};
+      print('HTTP Client error: $e');
+      return {'success': false, 'message': 'Tidak dapat terhubung ke server'};
     } on FormatException catch (e) {
-      if (kDebugMode) print('JSON Format error: $e');
+      print('JSON Format error: $e');
       return {'success': false, 'message': 'Format respons server tidak valid'};
     } catch (e) {
-      if (kDebugMode) print('Google login error: $e');
-      return {'success': false, 'message': 'Terjadi kesalahan: ${e.toString()}'};
+      print('Google login error: $e');
+
+      // Handle timeout specifically
+      if (e.toString().contains('timeout') ||
+          e.toString().contains('TimeoutException')) {
+        return {
+          'success': false,
+          'message': 'Koneksi timeout. Periksa koneksi internet dan coba lagi.'
+        };
+      }
+
+      // Handle network errors
+      if (e.toString().contains('SocketException') ||
+          e.toString().contains('HandshakeException')) {
+        return {
+          'success': false,
+          'message':
+              'Tidak dapat terhubung ke server. Periksa koneksi internet.'
+        };
+      }
+
+      return {
+        'success': false,
+        'message': 'Terjadi kesalahan tidak terduga. Silakan coba lagi.'
+      };
     }
   }
 
@@ -222,8 +354,11 @@ class AuthService {
         };
       }
     } catch (e) {
-      if (kDebugMode) print('Get profile error: $e');
-      return {'success': false, 'message': 'Terjadi kesalahan saat mengambil profil'};
+      print('Get profile error: $e');
+      return {
+        'success': false,
+        'message': 'Terjadi kesalahan saat mengambil profil'
+      };
     }
   }
 
@@ -251,20 +386,24 @@ class AuthService {
         };
       }
     } catch (e) {
-      if (kDebugMode) print('Update profile error: $e');
-      return {'success': false, 'message': 'Terjadi kesalahan saat memperbarui profil'};
+      print('Update profile error: $e');
+      return {
+        'success': false,
+        'message': 'Terjadi kesalahan saat memperbarui profil'
+      };
     }
   }
 
-  static void logout() {
+  static Future<void> logout() async {
     try {
       box.remove('token');
       box.remove('nama');
-      // Sign out dari Google dan Firebase juga
-      GoogleSignIn().signOut();
-      FirebaseAuth.instance.signOut();
+
+      // Sign out from Google and Firebase
+      await _googleSignIn.signOut();
+      await FirebaseAuth.instance.signOut();
     } catch (e) {
-      if (kDebugMode) print('Logout error: $e');
+      print('Logout error: $e');
     }
   }
 

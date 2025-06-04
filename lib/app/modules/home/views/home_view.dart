@@ -20,14 +20,15 @@ class HomeView extends GetView<HomeController> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      // nanti ambil dari database
-                      'Selamat Datang, \nAsihra',
+                    Obx(() => Text(
+                      controller.nama.value.isNotEmpty
+                          ? 'Selamat Datang, \n' + controller.nama.value
+                          : "Selamat Datang, \nNama Pengguna",
                       style: TextStyle(
-                          fontSize: 32,
+                          fontSize: 24,
                           fontWeight: FontWeight.bold,
                           color: AppColors.primaryColor),
-                    ),
+                    )),
                     SizedBox(
                       height: 16,
                     ),

@@ -1,14 +1,25 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:mom_stretch/app/data/app_colors.dart';
+import 'package:mom_stretch/app/services/auth_service.dart';
 
 class HomeController extends GetxController {
+  var nama = ''.obs;
 
   @override
   void onInit() {
     super.onInit();
+    fetchProfile();
   }
   
+  Future<void> fetchProfile() async {
+    final result = await AuthService.getProfile();
+    if (result['success']) {
+      final data = result['data'];
+      nama.value = data['nama'] ?? '';
+    }
+  }
+
   final articles = [
     {
       'image': 'assets/images/berita.png',

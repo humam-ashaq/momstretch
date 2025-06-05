@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../services/auth_service.dart';
 import '../../../../data/widgets/custom_snackbar.dart';
+import '../../verify_email/controllers/verify_email_controller.dart';
 
 class RegisterController extends GetxController {
   final emailC = TextEditingController();
@@ -34,10 +35,19 @@ class RegisterController extends GetxController {
 
     if (result['success']) {
       showCustomSnackbar(
-          'Sukses', 'Registrasi berhasil, mengarahkan ke login...',
+          'Sukses', 'Registrasi berhasil. Silakan verifikasi email.',
           backgroundColor: Colors.green);
-      await Future.delayed(Duration(seconds: 2));
-      Get.offNamed('/login');
+      await Future.delayed(Duration(seconds: 1));
+
+      // ✅ Kirim email ke VerifyEmailController
+      final verifyC = Get.put(VerifyEmailController());
+      verifyC.email.value = email;
+
+      // ✅ Pindah ke halaman verifikasi OTP dan kirimkan email
+      Get.toNamed('/verify-email')?.then((_) {
+        final verifyC = Get.find<VerifyEmailController>();
+        verifyC.email.value = email;
+      });
     } else {
       showCustomSnackbar('Error', result['message'],
           backgroundColor: Colors.red);

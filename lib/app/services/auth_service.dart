@@ -72,6 +72,27 @@ class AuthService {
     }
   }
 
+   static Future<Map<String, dynamic>> verifyOtp(
+      String email, String otp) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/verify-otp'),
+      headers: getHeaders(),
+      body: json.encode({'email': email, 'otp': otp}),
+    );
+
+    if (response.statusCode == 200) {
+      return {
+        'success': true,
+        'message': json.decode(response.body)['message'],
+      };
+    } else {
+      return {
+        'success': false,
+        'message': json.decode(response.body)['message'],
+      };
+    }
+  }
+
   static Future<Map<String, dynamic>> login(
       String email, String password) async {
     try {

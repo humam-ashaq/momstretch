@@ -6,6 +6,7 @@ abstract class Routes {
   static const HOME = _Paths.HOME;
   static const LOGIN = _Paths.LOGIN;
   static const REGISTER = _Paths.REGISTER;
+  static const VERIFY_EMAIL = _Paths.VERIFY_EMAIL;
   static const SPLASH = _Paths.SPLASH;
   static const PROGRAM = _Paths.PROGRAM;
   static const MAIN = _Paths.MAIN;
@@ -32,6 +33,7 @@ abstract class _Paths {
   static const HOME = '/home';
   static const LOGIN = '/login';
   static const REGISTER = '/register';
+  static const VERIFY_EMAIL = '/verify-email';
   static const SPLASH = '/splash';
   static const PROGRAM = '/program';
   static const MAIN = '/main';

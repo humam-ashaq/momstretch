@@ -12,6 +12,8 @@ import '../modules/auth/login/bindings/login_binding.dart';
 import '../modules/auth/login/views/login_view.dart';
 import '../modules/auth/register/bindings/register_binding.dart';
 import '../modules/auth/register/views/register_view.dart';
+import '../modules/auth/verify_email/bindings/verify_email_binding.dart';
+import '../modules/auth/verify_email/views/verify_email_view.dart';
 import '../modules/education/bindings/education_binding.dart';
 import '../modules/education/views/education_detail_view.dart';
 import '../modules/education/views/education_view.dart';
@@ -59,6 +61,11 @@ class AppPages {
       name: _Paths.REGISTER,
       page: () => RegisterView(),
       binding: RegisterBinding(),
+    ),
+    GetPage(
+      name: _Paths.VERIFY_EMAIL,
+      page: () => VerifyEmailView(),
+      binding: VerifyEmailBinding(),
     ),
     GetPage(
       name: _Paths.SPLASH,

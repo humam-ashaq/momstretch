@@ -7,4 +7,3 @@ class ProgramController extends GetxController {
     selectedProgram.value = program;
   }
 }
-

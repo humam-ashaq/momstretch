@@ -45,7 +45,7 @@ class LoginController extends GetxController {
         final data = result2['data'];
         program.value = data['program'] ?? '';
 
-        if (program.value.isNotEmpty) {
+        if (program.isNotEmpty) {
           Get.offAllNamed('/main');
         } else {
           Get.offAllNamed('/program');
@@ -70,7 +70,17 @@ class LoginController extends GetxController {
       print('Token dari Google Login: ${AuthService.getToken()}');
 
       await Future.delayed(Duration(seconds: 1));
-      Get.offAllNamed('/program'); // arahkan ke halaman setelah login sukses
+      final result2 = await AuthService.getProfile();
+      if (result2['success']) {
+        final data = result2['data'];
+        program.value = data['program'] ?? '';
+
+        if (program.isNotEmpty) {
+          Get.offAllNamed('/main');
+        } else {
+          Get.offAllNamed('/program');
+        }
+      }
     } else {
       showCustomSnackbar('Error', result['message'],
           backgroundColor: Colors.red);

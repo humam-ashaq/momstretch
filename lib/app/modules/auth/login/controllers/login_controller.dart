@@ -8,6 +8,7 @@ class LoginController extends GetxController {
   late TextEditingController passC;
   var isPasswordHidden = true.obs;
   var isLoading = false.obs;
+  var program = ''.obs;
 
   @override
   void onInit() {
@@ -37,16 +38,19 @@ class LoginController extends GetxController {
     if (result['success']) {
       showCustomSnackbar('Sukses', result['message'],
           backgroundColor: Colors.green);
-      print('Token yang disimpan di box: ${AuthService.getToken()}');
-      print('TOKEN YANG DIKIRIM: ${AuthService.getToken()}');
 
       await Future.delayed(Duration(seconds: 1));
-      Get.offAllNamed('/program'); // arahkan ke home setelah login
-      
-      // Test token setelah navigate
-      await Future.delayed(Duration(milliseconds: 500));
-      final token2 = AuthService.getToken();
-      print('Token after navigate: $token2');
+      final result2 = await AuthService.getProfile();
+      if (result2['success']) {
+        final data = result2['data'];
+        program.value = data['program'] ?? '';
+
+        if (program.value.isNotEmpty) {
+          Get.offAllNamed('/main');
+        } else {
+          Get.offAllNamed('/program');
+        }
+      }
     } else {
       showCustomSnackbar('Error', result['message'],
           backgroundColor: Colors.red);

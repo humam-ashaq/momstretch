@@ -63,7 +63,7 @@ class ProgramView extends GetView<ProgramController> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: controller.selectedProgram.value != null
-                        ? () => Get.offAllNamed('/main')
+                        ? controller.updateProgram
                         : null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primaryColor,

@@ -365,6 +365,37 @@ class AuthService {
     }
   }
 
+  static Future<Map<String, dynamic>> updateProgram(
+      String program) async {
+    try {
+      final response = await http.put(
+        Uri.parse('$baseUrl/program'),
+        headers: getHeaders(withAuth: true),
+        body: json.encode({
+          'program': program
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        return {
+          'success': true,
+          'message': json.decode(response.body)['message']
+        };
+      } else {
+        return {
+          'success': false,
+          'message': json.decode(response.body)['message']
+        };
+      }
+    } catch (e) {
+      print('Update program error: $e');
+      return {
+        'success': false,
+        'message': 'Terjadi kesalahan saat memperbarui program'
+      };
+    }
+  }
+
   static Future<void> logout() async {
     try {
       _box.remove('token');

@@ -413,3 +413,4 @@ class AuthService {
     return _box.hasData('token');
   }
 }
+

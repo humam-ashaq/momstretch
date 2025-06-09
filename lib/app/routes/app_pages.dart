@@ -4,6 +4,7 @@ import '../modules/about/bindings/about_binding.dart';
 import '../modules/about/views/about_view.dart';
 import '../modules/article/bindings/article_binding.dart';
 import '../modules/article/views/articel_view.dart';
+import '../modules/article/views/article_detail_view.dart';
 import '../modules/auth/forgot_password/bindings/forgot_password_binding.dart';
 import '../modules/auth/forgot_password/views/forgot_password_checkemail_view.dart';
 import '../modules/auth/forgot_password/views/forgot_password_email_view.dart';
@@ -155,6 +156,11 @@ class AppPages {
     GetPage(
       name: _Paths.ARTICLE,
       page: () => ArticleView(),
+      binding: ArticleBinding(),
+    ),
+    GetPage(
+      name: Routes.ARTICLE_DETAIL,
+      page: () => ArticleDetailView(),
       binding: ArticleBinding(),
     ),
     GetPage(

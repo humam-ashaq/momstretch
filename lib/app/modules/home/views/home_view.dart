@@ -78,12 +78,75 @@ class HomeView extends GetView<HomeController> {
 
                     const SizedBox(height: 24),
 
-                    ...controller.articles.map((article) => Padding(
-                          padding: const EdgeInsets.only(bottom: 16.0),
-                          child: controller.buildArticleCard(
-                              article['image']!, article['title']!),
-                        )),
-                    const SizedBox(height: 8),
+                    Text(
+                      'Baca Berita Terbaru',
+                      style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primaryColor),
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // Artikel dari Backend
+                    Obx(() {
+                      if (controller.isLoadingArticles.value) {
+                        // Loading state - tampilkan 3 placeholder
+                        return Column(
+                          children: List.generate(3, (index) => 
+                            controller.buildLoadingArticleCard()
+                          ),
+                        );
+                      }
+
+                      if (controller.articleErrorMessage.value.isNotEmpty) {
+                        // Error state
+                        return controller.buildErrorArticleCard();
+                      }
+
+                      if (controller.homeArticles.isEmpty) {
+                        // Empty state
+                        return Container(
+                          width: double.infinity,
+                          height: 200,
+                          margin: const EdgeInsets.only(bottom: 16.0),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[100],
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: Colors.grey[300]!),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.article_outlined,
+                                size: 48,
+                                color: Colors.grey[400],
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Belum ada artikel tersedia',
+                                style: TextStyle(
+                                  color: Colors.grey[600],
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+
+                      // Success state - tampilkan artikel
+                      return Column(
+                        children: controller.homeArticles.map((article) => 
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 16.0),
+                            child: controller.buildArticleCard(article),
+                          )
+                        ).toList(),
+                      );
+                    }),
+                    
                     Center(
                       child: ElevatedButton(
                         onPressed: controller.onViewAllPressed,
@@ -125,9 +188,6 @@ class HomeView extends GetView<HomeController> {
               
               child: Container(
                 padding: const EdgeInsets.only(left: 8, right: 8, top: 16, bottom: 16),
-                decoration: BoxDecoration(
-                  color: AppColors.forthColor,
-                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: const [

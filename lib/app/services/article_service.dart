@@ -86,6 +86,29 @@ class ArticleService {
       throw Exception('Error saat mengambil detail artikel: $e');
     }
   }
+
+  static Future<VisualizationData?> getVisualizationData() async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/api/visualization'),
+        headers: {
+          'Content-Type': 'application/json',
+          'X-API-Key': apiKey, // Sesuaikan dengan header yang dibutuhkan backend
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        return VisualizationData.fromJson(data);
+      } else if (response.statusCode == 404) {
+        throw Exception('No summary found');
+      } else {
+        throw Exception('Failed to load visualization data: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Error fetching visualization data: $e');
+    }
+  }
 }
 
 // Model untuk item di list artikel
@@ -150,6 +173,82 @@ class ArticleDetail {
       'content': content,
       'image_url': imageUrl,
       'month_year': monthYear,
+    };
+  }
+}
+
+class VisualizationData {
+  final List<TopWord> topWords;
+  final List<MonthlyPostCount> monthlyPostCount;
+
+  VisualizationData({
+    required this.topWords,
+    required this.monthlyPostCount,
+  });
+
+  factory VisualizationData.fromJson(Map<String, dynamic> json) {
+    return VisualizationData(
+      topWords: (json['top_words'] as List)
+          .map((item) => TopWord.fromJson(item))
+          .toList(),
+      monthlyPostCount: (json['monthly_post_count'] as List)
+          .map((item) => MonthlyPostCount.fromJson(item))
+          .toList(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'top_words': topWords.map((item) => item.toJson()).toList(),
+      'monthly_post_count': monthlyPostCount.map((item) => item.toJson()).toList(),
+    };
+  }
+}
+
+class TopWord {
+  final String word;
+  final int count;
+
+  TopWord({
+    required this.word,
+    required this.count,
+  });
+
+  factory TopWord.fromJson(Map<String, dynamic> json) {
+    return TopWord(
+      word: json['word'] as String,
+      count: json['count'] as int,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'word': word,
+      'count': count,
+    };
+  }
+}
+
+class MonthlyPostCount {
+  final String month;
+  final int count;
+
+  MonthlyPostCount({
+    required this.month,
+    required this.count,
+  });
+
+  factory MonthlyPostCount.fromJson(Map<String, dynamic> json) {
+    return MonthlyPostCount(
+      month: json['month'] as String,
+      count: json['count'] as int,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'month': month,
+      'count': count,
     };
   }
 }

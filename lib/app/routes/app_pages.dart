@@ -39,6 +39,8 @@ import '../modules/stretching/bindings/stretching_binding.dart';
 import '../modules/stretching/views/stretching_cam_view.dart';
 import '../modules/stretching/views/stretching_detail_view.dart';
 import '../modules/stretching/views/stretching_view.dart';
+import '../modules/visualization/bindings/visualization_binding.dart';
+import '../modules/visualization/views/visualization_view.dart';
 
 part 'app_routes.dart';
 
@@ -167,6 +169,11 @@ class AppPages {
       name: _Paths.ABOUT,
       page: () => AboutView(),
       binding: AboutBinding(),
+    ),
+    GetPage(
+      name: _Paths.VISUALIZATION,
+      page: () => VisualizationView(),
+      binding: VisualizationBinding(),
     ),
   ];
 }

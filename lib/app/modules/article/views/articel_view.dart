@@ -50,11 +50,11 @@ class ArticleView extends GetView<ArticleController> {
                   ),
                   IconButton(
                     icon: const Icon(
-                      Icons.edit,
-                      color: Colors.white,
+                      Icons.add_chart,
+                      color: AppColors.primaryColor,
                     ),
                     onPressed: () {
-                      // Get.to(() => ProfileEditView());
+                      Get.toNamed('/visualization');
                     },
                   )
                 ],

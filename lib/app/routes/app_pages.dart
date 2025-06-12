@@ -20,6 +20,8 @@ import '../modules/education/views/education_detail_view.dart';
 import '../modules/education/views/education_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
+import '../modules/login_logs/bindings/login_logs_binding.dart';
+import '../modules/login_logs/views/login_logs_view.dart';
 import '../modules/main/bindings/main_binding.dart';
 import '../modules/main/views/main_view.dart';
 import '../modules/mood_check/bindings/mood_check_binding.dart';
@@ -174,6 +176,11 @@ class AppPages {
       name: _Paths.VISUALIZATION,
       page: () => VisualizationView(),
       binding: VisualizationBinding(),
+    ),
+    GetPage(
+      name: _Paths.LOGIN_LOGS,
+      page: () => LoginLogsView(),
+      binding: LoginLogsBinding(),
     ),
   ];
 }

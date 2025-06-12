@@ -5,6 +5,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import '../../models/login_history_model.dart';
+
 class AuthService {
   static final GetStorage _box = GetStorage();
 
@@ -412,5 +414,18 @@ class AuthService {
   static bool isLoggedIn() {
     return _box.hasData('token');
   }
-}
 
+  static Future<List<LoginHistory>> fetchLoginHistory() async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/login-history'),
+      headers: getHeaders(withAuth: true)
+    );
+
+    if (response.statusCode == 200) {
+      final List data = jsonDecode(response.body);
+      return data.map((e) => LoginHistory.fromJson(e)).toList();
+    } else {
+      throw Exception('Gagal memuat riwayat login');
+    }
+  }
+}

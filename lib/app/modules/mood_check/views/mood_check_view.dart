@@ -132,7 +132,7 @@ class MoodCheckView extends GetView<MoodCheckController> {
                     children: [
                       const SizedBox(height: 16,),
                       const Text(
-                        'Rowayat',
+                        'Riwayat',
                         style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,

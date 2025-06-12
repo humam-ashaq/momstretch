@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mom_stretch/app/data/app_colors.dart';
 import '../controllers/profile_controller.dart';
-import 'profile_edit_view.dart';
 
 class ProfileView extends GetView<ProfileController> {
   @override
@@ -51,7 +50,7 @@ class ProfileView extends GetView<ProfileController> {
                         color: Colors.white,
                       ),
                       onPressed: () {
-                        Get.to(() => ProfileEditView());
+                        Get.toNamed('/login-logs');
                       },
                     )
                   ],

@@ -28,6 +28,7 @@ abstract class Routes {
   static const ARTICLE_DETAIL = _Paths.ARTICLE_DETAIL;
   static const ABOUT = _Paths.ABOUT;
   static const VISUALIZATION = _Paths.VISUALIZATION;
+  static const LOGIN_LOGS = _Paths.LOGIN_LOGS;
 }
 
 abstract class _Paths {
@@ -57,4 +58,5 @@ abstract class _Paths {
   static const ARTICLE_DETAIL = '/article-detail';
   static const ABOUT = '/about';
   static const VISUALIZATION = '/visualization';
+  static const LOGIN_LOGS = '/login-logs';
 }

@@ -55,7 +55,7 @@ class MainView extends GetView<MainController> {
                           icon: Icon(
                             Icons.notifications,
                             size: 30,
-                            color: Color.fromARGB(1000, 87, 76, 64),
+                            color: Colors.transparent,
                           )),
                     ],
                   ),
@@ -83,12 +83,12 @@ class MainView extends GetView<MainController> {
                 label: 'Stretching',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.menu_book),
-                label: 'Edukasi',
-              ),
-              BottomNavigationBarItem(
                 icon: Icon(Icons.monitor_heart_outlined),
                 label: 'Cek Mood',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.menu_book),
+                label: 'Edukasi',
               ),
             ],
           ),

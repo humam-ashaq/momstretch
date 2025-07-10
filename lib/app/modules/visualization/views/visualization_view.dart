@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:fl_chart/fl_chart.dart';
+import '../../../data/app_colors.dart';
 import '../controllers/visualization_controller.dart';
 
 class VisualizationView extends GetView<VisualizationController> {
@@ -9,17 +10,55 @@ class VisualizationView extends GetView<VisualizationController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Data Visualization'),
-        backgroundColor: Colors.indigo.shade600,
-        foregroundColor: Colors.white,
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () => controller.refreshData(),
+      backgroundColor: Colors.white,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(60),
+        child: Container(
+          decoration: BoxDecoration(boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              offset: const Offset(0, 1),
+              blurRadius: 1,
+              spreadRadius: 1,
+            )
+          ]),
+          child: AppBar(
+            backgroundColor: Colors.white,
+            automaticallyImplyLeading: false,
+            title: Padding(
+              padding: const EdgeInsets.fromLTRB(12, 30, 12, 24),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      Icons.arrow_back_ios,
+                      color: AppColors.primaryColor,
+                    ),
+                    onPressed: () => Get.back(),
+                  ),
+                  Text(
+                    'MOMSTRETCH+',
+                    style: TextStyle(
+                      letterSpacing: 2,
+                      fontFamily: 'HammersmithOne',
+                      fontWeight: FontWeight.normal,
+                      fontSize: 20,
+                      color: Color.fromARGB(1000, 235, 203, 143),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(
+                      Icons.add_chart,
+                      color: Colors.white,
+                    ),
+                    onPressed: () {},
+                  )
+                ],
+              ),
+            ),
           ),
-        ],
+        ),
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
@@ -95,6 +134,14 @@ class VisualizationView extends GetView<VisualizationController> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Text(
+                  'Visualisasi Artikel',
+                  style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.primaryColor,
+                    ),
+                ),
                 // Summary Cards
                 _buildSummaryCards(controller),
                 const SizedBox(height: 24),
@@ -118,6 +165,7 @@ class VisualizationView extends GetView<VisualizationController> {
       children: [
         Expanded(
           child: Card(
+            color: AppColors.forthColor,
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -133,6 +181,7 @@ class VisualizationView extends GetView<VisualizationController> {
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
+                      color: AppColors.primaryColor,
                     ),
                   ),
                   const Text(
@@ -149,6 +198,7 @@ class VisualizationView extends GetView<VisualizationController> {
         const SizedBox(width: 16),
         Expanded(
           child: Card(
+            color: AppColors.forthColor,
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -162,6 +212,7 @@ class VisualizationView extends GetView<VisualizationController> {
                   Text(
                     '${controller.totalWordsCount}',
                     style: const TextStyle(
+                      color: AppColors.primaryColor,
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
@@ -185,14 +236,16 @@ class VisualizationView extends GetView<VisualizationController> {
     final topWords = controller.getTopWords(10);
     
     return Card(
+      color: AppColors.forthColor,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Top 10 Most Frequent Words',
+              '10 Kata Paling Sering Muncul',
               style: TextStyle(
+                color: AppColors.primaryColor,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -296,14 +349,16 @@ class VisualizationView extends GetView<VisualizationController> {
     final monthlyData = controller.getRecentMonthlyData(12); // Get last 12 months
     
     return Card(
+      color: AppColors.forthColor,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Monthly Posts Count',
+              'Jumlah Postingan Bulanan',
               style: TextStyle(
+                color: AppColors.primaryColor,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),

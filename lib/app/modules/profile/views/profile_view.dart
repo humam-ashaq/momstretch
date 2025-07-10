@@ -46,8 +46,8 @@ class ProfileView extends GetView<ProfileController> {
                     ),
                     IconButton(
                       icon: const Icon(
-                        Icons.edit,
-                        color: Colors.white,
+                        Icons.history,
+                        color: AppColors.primaryColor,
                       ),
                       onPressed: () {
                         Get.toNamed('/login-logs');
@@ -109,20 +109,20 @@ class ProfileView extends GetView<ProfileController> {
                 ),
               ),
               // Age - Dynamic
-              Obx(() => ListTile(
-                    leading:
-                        const Icon(Icons.cake, color: AppColors.primaryColor),
-                    title: Text(
-                        controller.usia.value.isNotEmpty
-                            ? '${controller.usia.value} Tahun'
-                            : 'Usia Belum Diisi',
-                        style: TextStyle(color: AppColors.primaryColor)),
-                    subtitle: const Text('Usia',
-                        style: TextStyle(color: AppColors.primaryColor)),
-                  )),
-              const SizedBox(
-                height: 16,
-              ),
+              // Obx(() => ListTile(
+              //       leading:
+              //           const Icon(Icons.cake, color: AppColors.primaryColor),
+              //       title: Text(
+              //           controller.usia.value.isNotEmpty
+              //               ? '${controller.usia.value} Tahun'
+              //               : 'Usia Belum Diisi',
+              //           style: TextStyle(color: AppColors.primaryColor)),
+              //       subtitle: const Text('Usia',
+              //           style: TextStyle(color: AppColors.primaryColor)),
+              //     )),
+              // const SizedBox(
+              //   height: 16,
+              // ),
               Container(
                 margin: EdgeInsets.symmetric(horizontal: 20),
                 padding: EdgeInsets.all(16),

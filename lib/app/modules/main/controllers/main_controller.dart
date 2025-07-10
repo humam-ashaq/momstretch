@@ -9,8 +9,8 @@ class MainController extends GetxController {
   final List<Widget> pages = [
     HomeView(),
     StretchingView(),
-    EducationView(),
     MoodCheckView(),
+    EducationView(),
   ];
   
   var currentIndex = 0.obs;
@@ -24,6 +24,6 @@ class MainController extends GetxController {
   }
 
   void navigateToMoodCheck() {
-    changePage(3);
+    changePage(2);
   }
 }

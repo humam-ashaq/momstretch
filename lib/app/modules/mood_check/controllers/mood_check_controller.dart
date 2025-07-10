@@ -1,94 +1,21 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../services/epds_service.dart';
 
 class MoodCheckController extends GetxController {
-  // nanti diganti dari database
+  // Data utama
+  var isLoadingHistory = true.obs;
+  RxList<int> epdsHistory = <int>[].obs;
   RxInt epdsScore = 0.obs;
 
-  String get epdsResult {
-    if (epdsScore.value >= 13) {
-      return 'Beresiko Tinggi Depresi';
-    } else if (epdsScore.value >= 10) {
-      return 'Berkemungkinan Depresi';
-    } else {
-      return 'Resiko Rendah';
-    }
-  }
-
-  // Dummy EPDS history data
-  final List<int> epdsHistory = [3, 5, 6, 5, 7, 9, 8, 11, 13];
-
-  //onboarding epds
+  // State untuk Onboarding & Tes
   var currentPage = 0.obs;
-  late PageController pageController;
-
+  PageController? pageController;
   Timer? _timer;
-
-  void nextPage() {
-    if (currentPage.value < 2) {
-      pageController.nextPage(
-          duration: 300.milliseconds, curve: Curves.easeInOut);
-    } else {
-      Get.toNamed('/epds-test');
-    }
-  }
-
-  void previousPage() {
-    if (currentPage.value > 0) {
-      pageController.previousPage(
-        duration: 300.milliseconds,
-        curve: Curves.easeInOut,
-      );
-    } else {
-      Get.back();
-      Get.back(); // kembali ke halaman sebelumnya di aplikasi
-    }
-  }
-
-  void onPageChanged(int index) {
-    currentPage.value = index;
-    _startAutoAdvance(index);
-  }
-
-  void _startAutoAdvance(int pageIndex) {
-    _timer?.cancel(); // clear timer sebelumnya
-
-    if (pageIndex < 2) {
-      _timer = Timer(4.seconds, () {
-        if (currentPage.value == pageIndex) {
-          nextPage(); // hanya auto-next jika user masih di halaman yang sama
-        }
-      });
-    }
-  }
-
-  @override
-  void onInit() {
-    super.onInit();
-    currentPage.value = 0;
-
-    // Atur posisi awal PageController secara eksplisit
-    pageController = PageController(initialPage: 0);
-
-    pageController.addListener(() {
-      final newPage = pageController.page?.round() ?? 0;
-      if (currentPage.value != newPage) {
-        currentPage.value = newPage;
-        _startAutoAdvance(newPage);
-      }
-    });
-
-    _startAutoAdvance(0);
-  }
-
-  @override
-  void onClose() {
-    _timer?.cancel();
-    pageController.dispose();
-    super.onClose();
-  }
+  
+  // Flag untuk memastikan tidak ada operasi pada controller yang sudah di-dispose
+  bool isPageControllerActive = false;
 
   //epds test
   // Tambahkan dalam MoodCheckController
@@ -192,30 +119,147 @@ class MoodCheckController extends GetxController {
       ],
     },
   ];
-
-  // Jawaban untuk setiap pertanyaan, -1 artinya belum dijawab
+  
   RxList<int> answers = List.generate(10, (_) => -1).obs;
-
-// Status: apakah sudah disubmit
   RxBool isSubmitted = false.obs;
-
-// Apakah semua sudah dijawab?
   bool get allAnswered => !answers.contains(-1);
 
-// Simpan jawaban
+  @override
+  void onInit() {
+    super.onInit();
+    fetchEpdsHistory();
+  }
+
+  void resetTest() {
+    isPageControllerActive = true;
+    currentPage.value = 0;
+    pageController = PageController(initialPage: 0);
+
+    pageController?.addListener(() {
+      if (!isPageControllerActive || pageController == null || !pageController!.hasClients) return;
+      final newPage = pageController!.page!.round();
+      if (currentPage.value != newPage) {
+        currentPage.value = newPage;
+        _startAutoAdvance(newPage);
+      }
+    });
+
+    _startAutoAdvance(0);
+    answers.value = List.generate(10, (_) => -1);
+    isSubmitted.value = false;
+    epdsScore.value = 0;
+  }
+
+  void disposeOnboardingResources() {
+    isPageControllerActive = false;
+    _timer?.cancel();
+    pageController?.dispose();
+    // **STRATEGI BUMI HANGUS**
+    // Hapus referensi objek setelah di-dispose.
+    pageController = null;
+  }
+
+  @override
+  void onClose() {
+    isPageControllerActive = false;
+    _timer?.cancel();
+    pageController?.dispose();
+    // **STRATEGI BUMI HANGUS**
+    // Hapus referensi objek setelah di-dispose.
+    pageController = null;
+    super.onClose();
+  }
+
+  void _startAutoAdvance(int pageIndex) {
+    _timer?.cancel();
+    if (!isPageControllerActive) return; // Cek saklar sebelum membuat timer baru
+    if (pageIndex < 2) {
+      _timer = Timer(4.seconds, () {
+        if (!isPageControllerActive || pageController == null) return;
+        if (currentPage.value == pageIndex) {
+          nextPage();
+        }
+      });
+    }
+  }
+
+  void nextPage() {
+    // Guard Clause yang lebih ketat
+    if (!isPageControllerActive || pageController == null || !pageController!.hasClients) return;
+
+    if (currentPage.value < 2) {
+      pageController!.nextPage(
+          duration: 300.milliseconds, curve: Curves.easeInOut);
+    } else {
+      Get.toNamed('/epds-test');
+    }
+  }
+
+  void previousPage() {
+    // Guard Clause yang lebih ketat
+    if (!isPageControllerActive || pageController == null || !pageController!.hasClients) return;
+
+    if (currentPage.value > 0) {
+      pageController!.previousPage(
+        duration: 300.milliseconds,
+        curve: Curves.easeInOut,
+      );
+    } else {
+      Get.back();
+    }
+  }
+  
+  void onPageChanged(int index) {
+    if (!isPageControllerActive) return;
+    currentPage.value = index;
+    _startAutoAdvance(index);
+  }
+
+  // --- Fungsi-fungsi lain tidak berubah ---
+  Future<void> fetchEpdsHistory() async {
+    try {
+      isLoadingHistory.value = true;
+      final history = await EpdsService.fetchHistory();
+      epdsHistory.value = history;
+    } catch (e) {
+      Get.snackbar('Error', e.toString());
+    } finally {
+      isLoadingHistory.value = false;
+    }
+  }
+
+  String get epdsResult {
+    if (epdsScore.value >= 13) {
+      return 'Beresiko Tinggi Depresi';
+    } else if (epdsScore.value >= 10) {
+      return 'Berkemungkinan Depresi';
+    } else if (epdsScore.value >= 1) {
+      return 'Resiko Rendah';
+    } else {
+      return 'Anda belum mengisi EPDS minggu ini';
+    }
+  }
+
   void setAnswer(int questionIndex, int selectedOptionIndex) {
     answers[questionIndex] = selectedOptionIndex;
   }
 
-// Hitung skor dan tandai sebagai selesai
-  void submitAnswers() {
+  Future<void> submitAnswers() async {
     int total = 0;
     for (int i = 0; i < epdsQuestions.length; i++) {
-      final score =
-          (epdsQuestions[i]['options'] as List)[answers[i]]['score'] as int;
+      final score = (epdsQuestions[i]['options'] as List)[answers[i]]['score'] as int;
       total += score;
     }
     epdsScore.value = total;
-    isSubmitted.value = true;
+
+    final result = await EpdsService.saveResult(total);
+
+    if (result['success'] == true) {
+      isSubmitted.value = true;
+      await fetchEpdsHistory();
+      Get.snackbar('Berhasil', result['message'] ?? 'Hasil telah disimpan.');
+    } else {
+      Get.snackbar('Gagal', result['message'] ?? 'Terjadi kesalahan.');
+    }
   }
 }

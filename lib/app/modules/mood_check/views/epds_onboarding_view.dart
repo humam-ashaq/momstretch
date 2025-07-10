@@ -4,11 +4,28 @@ import 'package:mom_stretch/app/modules/mood_check/controllers/mood_check_contro
 
 import '../../../data/app_colors.dart';
 
-class EpdsOnboardingView extends GetView<MoodCheckController> {
+class EpdsOnboardingView extends StatefulWidget {
   const EpdsOnboardingView({Key? key}) : super(key: key);
 
   @override
+  State<EpdsOnboardingView> createState() => _EpdsOnboardingViewState();
+}
+
+class _EpdsOnboardingViewState extends State<EpdsOnboardingView> {
+  // Ambil controller secara manual menggunakan Get.find()
+  final controller = Get.find<MoodCheckController>();
+
+  @override
+  void dispose() {
+    // INI BAGIAN PALING PENTING
+    // Panggil fungsi dispose dari controller saat halaman ini dihancurkan
+    controller.disposeOnboardingResources();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    // Sisa dari build method-mu sama persis seperti sebelumnya
     final pages = [
       _OnboardingPage(
         imagePath: 'assets/images/epds1.png',
@@ -41,18 +58,20 @@ class EpdsOnboardingView extends GetView<MoodCheckController> {
           children: [
             Expanded(
               child: PageView.builder(
-                controller: controller.pageController,
+                // Gunakan '!' karena kita YAKIN controller tidak null
+                // karena sudah dibuat di `resetTest()` sebelum navigasi.
+                controller: controller.pageController!,
                 onPageChanged: controller.onPageChanged,
                 itemCount: pages.length,
                 itemBuilder: (_, index) => pages[index],
               ),
             ),
             Obx(() => _BottomNavigation(
-              currentIndex: controller.currentPage.value,
-              onNext: controller.nextPage,
-              onBack: controller.previousPage,
-              isLast: controller.currentPage.value == pages.length - 1,
-            )),
+                  currentIndex: controller.currentPage.value,
+                  onNext: controller.nextPage,
+                  onBack: controller.previousPage,
+                  isLast: controller.currentPage.value == pages.length - 1,
+                )),
           ],
         ),
       ),

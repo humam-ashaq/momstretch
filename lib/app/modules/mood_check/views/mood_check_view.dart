@@ -42,6 +42,7 @@ class MoodCheckView extends GetView<MoodCheckController> {
                         const SizedBox(height: 16),
                         GestureDetector(
                           onTap: () {
+                            controller.resetTest();
                             Get.toNamed('/epds-onb');
                           },
                           child: Container(

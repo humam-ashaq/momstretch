@@ -27,34 +27,28 @@ class StretchingView extends GetView<StretchingController> {
               ),
               const SizedBox(height: 24),
 
-              // Dropdown Pilihan Program
-              Obx(() => DropdownButtonFormField<String>(
-                    value: controller.selectedProgram.value,
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.white,
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: AppColors.primaryColor, width: 1.5),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: AppColors.tertiaryColor, width: 2),
-                      )
-                    ),
-                    items: controller.programList.map((program) {
-                      return DropdownMenuItem(
-                        value: program,
-                        child: Text(program,
-                            style:
-                                const TextStyle(color: AppColors.primaryColor)),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      if (value != null)
-                        controller.selectedProgram.value = value;
-                    },
-                  )),
+              TextFormField(
+                controller: controller.programController, // Gunakan controller dari GetX
+                readOnly: true, // Kunci utama: membuat field tidak bisa diedit
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white,
+                  // Tambahkan ikon untuk memperjelas bahwa ini adalah info
+                  prefixIcon: const Icon(
+                    Icons.check_circle_outline,
+                    color: AppColors.primaryColor,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: AppColors.primaryColor, width: 1.5),
+                  ),
+                  focusedBorder: OutlineInputBorder( // focusedBorder tetap ada untuk konsistensi
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: AppColors.primaryColor, width: 1.5),
+                  ),
+                ),
+                style: const TextStyle(color: AppColors.primaryColor, fontWeight: FontWeight.w500),
+              ),
 
               const SizedBox(height: 24),
 

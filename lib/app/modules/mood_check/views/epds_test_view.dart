@@ -10,12 +10,56 @@ class EpdsTestView extends GetView<MoodCheckController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text(
-          'Tes EPDS',
-          style: TextStyle(color: AppColors.primaryColor),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(60),
+        child: Container(
+          decoration: BoxDecoration(boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              offset: const Offset(0, 1),
+              blurRadius: 1,
+              spreadRadius: 1,
+            )
+          ]),
+          child: AppBar(
+            backgroundColor: Colors.white,
+            automaticallyImplyLeading: false,
+            title: Padding(
+              padding: const EdgeInsets.fromLTRB(12, 30, 12, 24),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      Icons.arrow_back_ios,
+                      color: AppColors.primaryColor,
+                    ),
+                    onPressed: () => Get.back(),
+                  ),
+                  Text(
+                    'MOMSTRETCH+',
+                    style: TextStyle(
+                      letterSpacing: 2,
+                      fontFamily: 'HammersmithOne',
+                      fontWeight: FontWeight.normal,
+                      fontSize: 20,
+                      color: Color.fromARGB(1000, 235, 203, 143),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(
+                      Icons.edit,
+                      color: Colors.transparent,
+                    ),
+                    onPressed: () {
+                      // Get.to(() => ProfileEditView());
+                    },
+                  )
+                ],
+              ),
+            ),
+          ),
         ),
-        backgroundColor: Colors.white,
       ),
       body: SafeArea(
         child: Obx(() => controller.isSubmitted.value
@@ -30,6 +74,11 @@ class EpdsTestView extends GetView<MoodCheckController> {
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
+          const Text(
+            'Tes EPDS',
+            style: TextStyle(fontSize: 24, color: AppColors.primaryColor, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8,),
           const Text(
             'Pilih jawaban yang paling dekat dengan perasaan Anda dalam 7 hari terakhir:',
             style: TextStyle(fontSize: 14, color: AppColors.primaryColor),
@@ -82,11 +131,15 @@ class EpdsTestView extends GetView<MoodCheckController> {
             ),
           ),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryColor),
+            style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primaryColor),
             onPressed: controller.allAnswered ? controller.submitAnswers : null,
-            child: const Text('Kirim', style: TextStyle(
-              color: Colors.white,
-            ),),
+            child: const Text(
+              'Kirim',
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
           ),
         ],
       ),
@@ -104,11 +157,13 @@ class EpdsTestView extends GetView<MoodCheckController> {
           Text(controller.epdsResult, style: const TextStyle(fontSize: 18)),
           const SizedBox(height: 20),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryColor),
+            style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primaryColor),
             onPressed: () => Get.offNamed('/main'),
-            child: const Text('Kembali', style: TextStyle(
-              color: Colors.white
-            ),),
+            child: const Text(
+              'Kembali',
+              style: TextStyle(color: Colors.white),
+            ),
           ),
         ],
       ),

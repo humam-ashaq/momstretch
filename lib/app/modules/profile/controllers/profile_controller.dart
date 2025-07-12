@@ -8,6 +8,7 @@ import '../../../services/auth_service.dart';
 class ProfileController extends GetxController {
   var nama = ''.obs;
   var email = ''.obs;
+  var program = ''.obs;
   var usia = ''.obs;
   var fotoProfil = ''.obs;
   var isLoading = true.obs;
@@ -31,6 +32,21 @@ class ProfileController extends GetxController {
       email.value = data['email'] ?? '';
       usia.value = data['usia']?.toString() ?? '';
       fotoProfil.value = data['foto_profil'] ?? '';
+      final programFromDb = data['program'] ?? '';
+
+      String displayProgram;
+      switch (programFromDb.toLowerCase()) {
+        case 'normal':
+          displayProgram = 'Persalinan Normal';
+          break;
+        case 'caesar':
+          displayProgram = 'Persalinan Operasi Caesar';
+          break;
+        default:
+          displayProgram = 'Program Belum Dipilih';
+      }
+
+      program.value = displayProgram;
 
       // Update controllers dengan data yang ada.
       usiaC.text = usia.value;

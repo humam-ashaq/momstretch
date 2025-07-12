@@ -1,10 +1,11 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:get_storage/get_storage.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-
+import 'package:device_info_plus/device_info_plus.dart';
 import '../../models/login_history_model.dart';
 
 class AuthService {
@@ -95,8 +96,29 @@ class AuthService {
     }
   }
 
+  static Future<String> _getDeviceIdentifier() async {
+    final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+    try {
+      if (Platform.isAndroid) {
+        final AndroidDeviceInfo androidInfo = await deviceInfoPlugin.androidInfo;
+        final brand = androidInfo.brand; 
+        final model = androidInfo.model; 
+        
+        final capitalizedBrand = brand.substring(0, 1).toUpperCase() + brand.substring(1);
+        return '$capitalizedBrand $model'; 
+      } else if (Platform.isIOS) {
+        final IosDeviceInfo iosInfo = await deviceInfoPlugin.iosInfo;
+        return iosInfo.utsname.machine;
+      }
+    } catch (e) {
+      return 'Unknown Device';
+    }
+    return 'Unsupported Platform';
+  }
+
   static Future<Map<String, dynamic>> login(
       String email, String password) async {
+        final String deviceName = await _getDeviceIdentifier();
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/login'),
@@ -104,6 +126,7 @@ class AuthService {
         body: json.encode({
           'email': email,
           'password': password,
+          'device' : deviceName,
         }),
       );
 
@@ -127,6 +150,7 @@ class AuthService {
   }
 
   static Future<Map<String, dynamic>> signInWithGoogle() async {
+    final String deviceName = await _getDeviceIdentifier();
     try {
       // Sign out first to ensure clean state
       await _googleSignIn.signOut();
@@ -210,7 +234,10 @@ class AuthService {
           .post(
         Uri.parse('$baseUrl/login_oauth'),
         headers: getHeaders(),
-        body: json.encode({'firebase_token': firebaseToken}),
+        body: json.encode({
+          'firebase_token': firebaseToken,
+          'device': deviceName,
+        }),
       )
           .timeout(
         const Duration(seconds: 30),

@@ -7,75 +7,178 @@ import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:video_player/video_player.dart';
 import '../../../services/auth_service.dart';
+import '../../../services/stretching_service.dart';
 import '../views/stretching_detail_sheet.dart';
 
 class StretchingController extends GetxController {
+  final StretchingService _stretchingService = StretchingService();
   Interpreter? interpreter;
   List<String> labels = [];
   CameraController? cameraController;
   List<CameraDescription> cameras = [];
   int selectedCameraIndex = 0;
-  var isCameraInitialized = false.obs;
   final poseDetector = PoseDetector(
     options: PoseDetectorOptions(mode: PoseDetectionMode.stream),
   );
   bool isDetecting = false;
+  VideoPlayerController? videoPlayerController;
+  final programController = TextEditingController();
+
+  var isStretchingLoading = true.obs;
+  var isMovementsLoading = true.obs;
+  var isVideoInitialized = false.obs;
+  var isCameraInitialized = false.obs;
+
+  final userProgram = ''.obs; 
+  final stretchingList = <Stretching>[].obs; 
+  final movementList = <Movement>[].obs;
+
+  final selectedStretching = Rxn<Stretching>();
+  final selectedMovementDetail = Rxn<MovementDetail>();
+  final selectedMovementTarget = ''.obs;
+
   final Map<String, int> predictionCounter = {};
   static const int correctThreshold =
       5; // Jumlah deteksi berturut-turut untuk dianggap "benar"
   final RxString predictedLabel = ''.obs; // Untuk tampilan UI
-  VideoPlayerController? videoPlayerController;
-  final isVideoInitialized = false.obs;
-  final programController = TextEditingController();
-
+  
   @override
   void onInit() {
     super.onInit();
-    if (selectedProgram.value == null && programList.isNotEmpty) {
-      selectedProgram.value = programList.first; // atau nilai default lain
-    }
     loadModel();
-    fetchProfile();
+    fetchProfileAndStretching();
   }
 
   @override
   void onClose() {
-    cameraController?.stopImageStream();
     cameraController?.dispose();
     interpreter?.close();
-    disposeVideoPlayer();
+    videoPlayerController?.dispose();
     programController.dispose();
     super.onClose();
   }
 
-  Future<void> fetchProfile() async {
-    final token = AuthService.getToken();
-    print('Token fetch: ${token}');
-    final result = await AuthService.getProfile();
-    if (result['success']) {
-      final data = result['data'];
-      final programFromDb = data['program'] ?? '';
+  Future<void> fetchProfileAndStretching() async {
+    try {
+      final result = await AuthService.getProfile();
+      if (result['success']) {
+        final data = result['data'];
+        final programFromDb = data['program']?.toLowerCase() ?? 'normal';
+        userProgram.value = programFromDb; // Simpan program (misal: 'normal')
 
-      // --- LOGIKA PEMETAAN DIMULAI DI SINI ---
-      String displayProgram;
-      switch (programFromDb.toLowerCase()) {
-        case 'normal':
-          displayProgram = 'Persalinan Normal';
-          break;
-        case 'caesar':
-          displayProgram = 'Persalinan Operasi Caesar';
-          break;
-        default:
-          displayProgram = 'Program Belum Dipilih';
+        String displayProgram;
+        switch (programFromDb) {
+          case 'normal':
+            displayProgram = 'Persalinan Normal';
+            break;
+          case 'caesar':
+            displayProgram = 'Persalinan Operasi Caesar';
+            break;
+          default:
+            displayProgram = 'Program Belum Dipilih';
+        }
+        programController.text = displayProgram;
+
+        // Setelah tahu program user, fetch list stretching
+        fetchStretchingList();
+      } else {
+        programController.text = 'Gagal memuat program';
+        isStretchingLoading.value = false;
       }
-      // --- AKHIR LOGIKA PEMETAAN ---
-
-      // Set teks pada controller dengan hasil pemetaan
-      programController.text = displayProgram;
-    } else {
-      programController.text = 'Gagal memuat program';
+    } catch (e) {
+      Get.snackbar('Error', 'Gagal memuat profil: $e');
+      isStretchingLoading.value = false;
     }
   }
+
+  Future<void> fetchStretchingList() async {
+    try {
+      isStretchingLoading.value = true;
+      final result = await _stretchingService.getStretchingList(userProgram.value);
+      stretchingList.assignAll(result);
+    } catch (e) {
+      Get.snackbar('Error', 'Gagal memuat daftar stretching: $e');
+    } finally {
+      isStretchingLoading.value = false;
+    }
+  }
+
+  Future<void> fetchMovementList(String stretchingType) async {
+    try {
+      isMovementsLoading.value = true;
+      movementList.clear(); // Kosongkan list sebelum fetch baru
+      final result = await _stretchingService.getMovementList(stretchingType);
+      movementList.assignAll(result);
+    } catch (e) {
+      Get.snackbar('Error', 'Gagal memuat daftar gerakan: $e');
+    } finally {
+      isMovementsLoading.value = false;
+    }
+  }
+
+  void goToStretchingDetail(Stretching stretching) {
+    selectedStretching.value = stretching;
+    fetchMovementList(stretching.stretching); // Fetch gerakan untuk stretching yg dipilih
+    Get.toNamed('/stretching-detail');
+  }
+
+  void showMovementDetail(Movement movement) async {
+    try {
+      // Ambil detail lengkap termasuk videoId dan deskripsi
+      final detail = await _stretchingService.getMovementDetail(movement.id);
+      selectedMovementDetail.value = detail;
+      selectedMovementTarget.value = detail.movement; // set target untuk deteksi pose
+      
+      initializeVideoPlayer(); // Inisialisasi video setelah dapat detail
+
+      Get.bottomSheet(
+        const StretchingDetailSheet(),
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+      ).whenComplete(() {
+        disposeVideoPlayer();
+      });
+    } catch (e) {
+      Get.snackbar('Error', 'Gagal memuat detail gerakan: $e');
+    }
+  }
+
+  void goToStretchingCamera() async {
+    // Pastikan movement sudah dipilih sebelum ke kamera
+    if (selectedMovementDetail.value == null) {
+      Get.snackbar('Perhatian', 'Pilih gerakan terlebih dahulu.');
+      return;
+    }
+    await initializeCamera();
+    Get.toNamed('/stretching-cam');
+  }
+
+  Future<void> initializeVideoPlayer() async {
+    final videoId = selectedMovementDetail.value?.videoId;
+    if (videoId == null || videoId.isEmpty) {
+      isVideoInitialized.value = false;
+      return;
+    }
+
+    final videoUrl = Uri.parse('https://drive.google.com/uc?export=download&id=$videoId');
+    videoPlayerController = VideoPlayerController.networkUrl(videoUrl);
+
+    try {
+      await videoPlayerController!.initialize();
+      isVideoInitialized.value = true;
+    } catch (e) {
+      print("Error initializing video: $e");
+      isVideoInitialized.value = false;
+    }
+  }
+
+  void disposeVideoPlayer() {
+    videoPlayerController?.dispose();
+    videoPlayerController = null;
+    isVideoInitialized.value = false;
+  }
+
+
 
   Future<void> loadModel() async {
     try {
@@ -178,7 +281,7 @@ class StretchingController extends GetxController {
       final predicted = labels[maxIndex];
 
       // Evaluasi kebenaran berdasarkan label pilihan user
-      if (predicted == selectedMovement) {
+      if (predicted == selectedMovementTarget.value) {
         predictionCounter.update(predicted, (val) => val + 1,
             ifAbsent: () => 1);
       } else {
@@ -191,196 +294,12 @@ class StretchingController extends GetxController {
       predictedLabel.value =
           "$predicted - ${isCorrect ? "✅ Sudah Benar" : "❌ Belum Benar"}";
       debugPrint(
-          "🎯 Target: $selectedMovement | Predicted: $predicted | Count: $count");
+          "🎯 Target: $selectedMovementTarget.value | Predicted: $predicted | Count: $count");
     } catch (e) {
       debugPrint("❌ Pose detection error: $e");
     } finally {
       isDetecting = false;
     }
-  }
-
-  // List stretching yang tersedia
-  final stretchingList = <Map<String, String>>[
-    {
-      'image': 'assets/images/pose2.png',
-      'title': 'Senam Nifas',
-      'level': 'Pemula',
-      'duration': '23 menit',
-    },
-    {
-      'image': 'assets/images/pose1.png',
-      'title': 'Senam Diastasis Recti',
-      'level': 'Pemula',
-      'duration': '20 menit',
-    },
-  ].obs;
-
-  final selectedProgram = RxnString(); // Melahirkan Normal / Caesar
-  final selectedStretching =
-      Rxn<Map<String, String>>(); // Detail stretching yang dipilih
-  final selectedMovement =
-      Rxn<Map<String, String>>(); // Detail gerakan yang dipilih
-
-  final List<String> programList = [
-    'Persalinan Normal',
-    'Persalinan Operasi Caesar',
-  ];
-
-  final Map<String, List<Map<String, String>>> movementsByStretchingType = {
-    'Senam Nifas': [
-      {
-        'image': 'assets/images/yoga.png',
-        'title': 'Slide Out',
-        'videoId': '1Z1dOI0AszrQpRyvf1oRBNyHUJPBm2pol',
-        'description': '''
-# Gerakan 1
-Slide Out:
-- Duduk bersila di lantai
-- Kemudian posisikan satu tangan di perut dan satu tangan lagi di lantai, sambil memegang handuk kecil
-- Sambil Tarik nafas, dorong tangan anda yang sedang memegang handuk ke arah samping
-- Lalu sambil buang napas dan kempiskan perut, Tarik tangan anda ke posisi semula
-- Ulangi Gerakan ini 3 × 10 hingga 12 repetisi pada masing-masing sisi tangan
-        ''',
-      },
-      {
-        'image': 'assets/images/yoga.png',
-        'title': 'Pelvic Tilts',
-        'description': '''
-# Gerakan 1
-Slide Out:
-- Duduk bersila di lantai
-- Kemudian posisikan satu tangan di perut dan satu tangan lagi di lantai, sambil memegang handuk kecil
-- Sambil Tarik nafas, dorong tangan anda yang sedang memegang handuk ke arah samping
-- Lalu sambil buang napas dan kempiskan perut, Tarik tangan anda ke posisi semula
-- Ulangi Gerakan ini 3 × 10 hingga 12 repetisi pada masing-masing sisi tangan
-        ''',
-      },
-      {
-        'image': 'assets/images/yoga.png',
-        'title': 'Heel Slides',
-        'description': '''
-# Gerakan 1
-Slide Out:
-- Duduk bersila di lantai
-- Kemudian posisikan satu tangan di perut dan satu tangan lagi di lantai, sambil memegang handuk kecil
-- Sambil Tarik nafas, dorong tangan anda yang sedang memegang handuk ke arah samping
-- Lalu sambil buang napas dan kempiskan perut, Tarik tangan anda ke posisi semula
-- Ulangi Gerakan ini 3 × 10 hingga 12 repetisi pada masing-masing sisi tangan
-        ''',
-      },
-    ],
-    'Senam Diastasis Recti': [
-      {
-        'image': 'assets/images/yoga.png',
-        'title': 'Butterfly Stretch',
-        'description': '''
-# Gerakan 1
-Slide Out:
-- Duduk bersila di lantai
-- Kemudian posisikan satu tangan di perut dan satu tangan lagi di lantai, sambil memegang handuk kecil
-- Sambil Tarik nafas, dorong tangan anda yang sedang memegang handuk ke arah samping
-- Lalu sambil buang napas dan kempiskan perut, Tarik tangan anda ke posisi semula
-- Ulangi Gerakan ini 3 × 10 hingga 12 repetisi pada masing-masing sisi tangan
-        ''',
-      },
-      {
-        'image': 'assets/images/yoga.png',
-        'title': 'Hip Opener',
-        'description': '''
-# Gerakan 1
-Slide Out:
-- Duduk bersila di lantai
-- Kemudian posisikan satu tangan di perut dan satu tangan lagi di lantai, sambil memegang handuk kecil
-- Sambil Tarik nafas, dorong tangan anda yang sedang memegang handuk ke arah samping
-- Lalu sambil buang napas dan kempiskan perut, Tarik tangan anda ke posisi semula
-- Ulangi Gerakan ini 3 × 10 hingga 12 repetisi pada masing-masing sisi tangan
-        ''',
-      },
-    ],
-  };
-
-  List<Map<String, String>> get movementsForSelectedStretching {
-    final title = selectedStretching.value?['title'];
-    return movementsByStretchingType[title] ?? [];
-  }
-
-  String getProgramDescription(String program) {
-    switch (program) {
-      case 'Persalinan Normal':
-        return '''
-🌞 Untuk persalinan normal:
-Mulai 1–2 hari pasca melahirkan (jika tidak ada komplikasi).
-
-Durasi:
-✅ 10–20 menit per sesi, 1–2 kali sehari.
-
-Fokus pada:
-Pernapasan dalam  
-Senam Kegel (melatih otot dasar panggul)  
-Peregangan ringan
-''';
-      case 'Persalinan Operasi Caesar':
-        return '''
-🌸 Untuk persalinan Caesar:
-Mulai setelah dokter mengizinkan (umumnya 4–6 minggu pasca operasi).
-
-Durasi:
-✅ 5–15 menit per sesi, 1 kali sehari.
-
-Fokus pada:
-Pemulihan luka operasi  
-Peregangan lembut  
-Perkuatan otot dasar panggul secara bertahap
-''';
-      default:
-        return 'Deskripsi belum tersedia untuk program ini.';
-    }
-  }
-
-  void goToStretchingDetail(Map<String, String> stretching) {
-    selectedStretching.value = stretching;
-    Get.toNamed('/stretching-detail');
-  }
-
-  void showMovementDetail(Map<String, String> movement) {
-    selectedMovement.value = movement;
-    initializeVideoPlayer();
-
-    Get.bottomSheet(
-      const StretchingDetailSheet(),
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-    ).whenComplete(() {
-      disposeVideoPlayer();
-    });
-  }
-
-  Future<void> initializeVideoPlayer() async {
-    final videoId = selectedMovement.value?['videoId'];
-    if (videoId == null || videoId.isEmpty) {
-      print("Video ID tidak ditemukan");
-      isVideoInitialized.value = false;
-      return;
-    }
-
-    final videoUrl =
-        Uri.parse('https://drive.google.com/uc?export=download&id=$videoId');
-
-    videoPlayerController = VideoPlayerController.networkUrl(videoUrl);
-
-    try {
-      await videoPlayerController!.initialize();
-      isVideoInitialized.value = true;
-    } catch (e) {
-      print("Error initializing video: $e");
-      isVideoInitialized.value = false;
-    }
-  }
-
-  void disposeVideoPlayer() {
-    videoPlayerController?.dispose();
-    videoPlayerController = null;
-    isVideoInitialized.value = false;
   }
 
   Future<void> initializeCamera() async {
@@ -420,10 +339,5 @@ Perkuatan otot dasar panggul secara bertahap
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-  }
-
-  void goToStretchingCamera() async {
-    await initializeCamera(); // pastikan kamera siap sebelum pindah
-    Get.toNamed('/stretching-cam');
   }
 }

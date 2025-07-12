@@ -9,7 +9,7 @@ class StretchingDetailSheet extends GetView<StretchingController> {
 
   @override
   Widget build(BuildContext context) {
-    final item = controller.selectedMovement.value;
+    final item = controller.selectedMovementDetail.value;
 
     if (item == null) {
       return const Padding(
@@ -31,11 +31,10 @@ class StretchingDetailSheet extends GetView<StretchingController> {
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           children: [
             Center(
               child: Text(
-                item['title'] ?? '',
+                item.movement,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 20,
@@ -99,7 +98,7 @@ class StretchingDetailSheet extends GetView<StretchingController> {
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Text(
-                item['description'] ?? 'Tidak ada deskripsi.',
+                item.movementDesc,
                 style: const TextStyle(
                     color: AppColors.primaryColor, fontSize: 14, height: 1.6),
               ),

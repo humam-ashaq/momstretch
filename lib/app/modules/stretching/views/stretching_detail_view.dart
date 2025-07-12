@@ -9,8 +9,6 @@ class StretchingDetailView extends GetView<StretchingController> {
   @override
   Widget build(BuildContext context) {
     final stretching = controller.selectedStretching.value;
-    final program = controller.selectedProgram.value ?? 'Program';
-    final movements = controller.movementsForSelectedStretching;
 
     if (stretching == null) {
       return const Scaffold(
@@ -36,7 +34,7 @@ class StretchingDetailView extends GetView<StretchingController> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      stretching['title'] ?? '',
+                      stretching.stretching,
                       style: const TextStyle(
                         color: AppColors.primaryColor,
                         fontSize: 24,
@@ -60,8 +58,9 @@ class StretchingDetailView extends GetView<StretchingController> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  '${stretching['duration']}, $program',
-                  style: const TextStyle(fontSize: 16, color: AppColors.primaryColor),
+                  '${stretching.duration}, ${stretching.program}',
+                  style: const TextStyle(
+                      fontSize: 16, color: AppColors.primaryColor),
                 ),
               ),
             ),
@@ -79,8 +78,9 @@ class StretchingDetailView extends GetView<StretchingController> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  controller.getProgramDescription(program),
-                  style: const TextStyle(fontSize: 14, color: AppColors.primaryColor),
+                  stretching.stretchingDesc, 
+                  style: const TextStyle(
+                      fontSize: 14, color: AppColors.primaryColor),
                 ),
               ),
             ),
@@ -95,10 +95,9 @@ class StretchingDetailView extends GetView<StretchingController> {
                 child: Text(
                   'DAFTAR GERAKAN',
                   style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    color: AppColors.primaryColor
-                  ),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: AppColors.primaryColor),
                 ),
               ),
             ),
@@ -106,70 +105,88 @@ class StretchingDetailView extends GetView<StretchingController> {
             const SizedBox(height: 16),
 
             // List gerakan
+            // List gerakan
             Expanded(
-              child: ListView.builder(
-                itemCount: movements.length,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                itemBuilder: (context, index) {
-                  final item = movements[index];
-                  return Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    color:Colors.white,
-                    elevation: 4,
-                    margin: const EdgeInsets.only(bottom: 16),
-                    child: Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Image.asset(
-                                item['image']!,
-                                width: 48,
-                                height: 48,
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Text(
-                                  item['title']!,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                    color: AppColors.primaryColor
+              child: Obx(() {
+                // Bungkus dengan Obx
+                // TAMBAHKAN: Cek loading state
+                if (controller.isMovementsLoading.value) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (controller.movementList.isEmpty) {
+                  return const Center(
+                      child: Text("Tidak ada gerakan untuk program ini."));
+                }
+                // ---
+                return ListView.builder(
+                  itemCount:
+                      controller.movementList.length, // Ganti ke movementList
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  itemBuilder: (context, index) {
+                    final item = controller.movementList[
+                        index]; // item sekarang bertipe 'Movement'
+                    return Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      color: Colors.white,
+                      elevation: 4,
+                      margin: const EdgeInsets.only(bottom: 16),
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                // GANTI Image.asset menjadi Image.network
+                                Image.network(
+                                  item.imageUrl ??
+                                      'https://via.placeholder.com/48x48?text=N/A',
+                                  width: 48,
+                                  height: 48,
+                                  // Tambahkan loading dan error builder jika perlu
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Text(
+                                    item.movement,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                        color: AppColors.primaryColor),
                                   ),
                                 ),
+                              ],
+                            ),
+                            Divider(
+                              color: AppColors.secondaryColor,
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                controller.showMovementDetail(item);
+                              },
+                              child: const Row(
+                                children: [
+                                  Text(
+                                    "Lihat Detail",
+                                    style: TextStyle(
+                                        color: AppColors.primaryColor),
+                                  ),
+                                  SizedBox(width: 4),
+                                  Icon(
+                                    Icons.chevron_right,
+                                    color: AppColors.primaryColor,
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                          Divider(color: AppColors.secondaryColor,),
-                          TextButton(
-                                onPressed: () {
-                                  controller.showMovementDetail(item);
-                                },
-                                child: const Row(
-                                  children: [
-                                    Text(
-                                      "Lihat Detail",
-                                      style: TextStyle(
-                                        color: AppColors.primaryColor
-                                      ),
-                                    ),
-                                    SizedBox(width: 4),
-                                    Icon(
-                                      Icons.chevron_right,
-                                      color: AppColors.primaryColor,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                        ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                },
-              ),
+                    );
+                  },
+                );
+              }),
             ),
           ],
         ),

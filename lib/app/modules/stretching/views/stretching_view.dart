@@ -28,7 +28,8 @@ class StretchingView extends GetView<StretchingController> {
               const SizedBox(height: 24),
 
               TextFormField(
-                controller: controller.programController, // Gunakan controller dari GetX
+                controller: controller
+                    .programController, // Gunakan controller dari GetX
                 readOnly: true, // Kunci utama: membuat field tidak bisa diedit
                 decoration: InputDecoration(
                   filled: true,
@@ -40,107 +41,135 @@ class StretchingView extends GetView<StretchingController> {
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: AppColors.primaryColor, width: 1.5),
+                    borderSide:
+                        BorderSide(color: AppColors.primaryColor, width: 1.5),
                   ),
-                  focusedBorder: OutlineInputBorder( // focusedBorder tetap ada untuk konsistensi
+                  focusedBorder: OutlineInputBorder(
+                    // focusedBorder tetap ada untuk konsistensi
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: AppColors.primaryColor, width: 1.5),
+                    borderSide:
+                        BorderSide(color: AppColors.primaryColor, width: 1.5),
                   ),
                 ),
-                style: const TextStyle(color: AppColors.primaryColor, fontWeight: FontWeight.w500),
+                style: const TextStyle(
+                    color: AppColors.primaryColor, fontWeight: FontWeight.w500),
               ),
 
               const SizedBox(height: 24),
 
               // List Stretching
               Expanded(
-                child: Obx(() => ListView.builder(
-                      itemCount: controller.stretchingList.length,
-                      itemBuilder: (context, index) {
-                        final item = controller.stretchingList[index];
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 16),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Stack(
-                              children: [
-                                // Gambar Stretching
-                                Image.asset(
-                                  item['image']!,
-                                  width: double.infinity,
-                                  height: 200,
-                                  fit: BoxFit.cover,
-                                ),
+                child: Obx(() {
+                  // TAMBAHKAN: Cek loading state
+                  if (controller.isStretchingLoading.value) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (controller.stretchingList.isEmpty) {
+                    return const Center(
+                        child: Text(
+                            "Tidak ada program stretching yang tersedia."));
+                  }
+                  // ---
+                  return ListView.builder(
+                    itemCount: controller.stretchingList.length,
+                    itemBuilder: (context, index) {
+                      final item = controller.stretchingList[
+                          index]; // item sekarang bertipe 'Stretching'
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Stack(
+                            children: [
+                              // Gambar Stretching
+                              // GANTI Image.asset menjadi Image.network
+                              Image.network(
+                                item.imageUrl ??
+                                    'https://via.placeholder.com/400x200?text=No+Image', // URL fallback
+                                width: double.infinity,
+                                height: 200,
+                                fit: BoxFit.cover,
+                                loadingBuilder: (context, child, progress) {
+                                  return progress == null
+                                      ? child
+                                      : const Center(
+                                          child: CircularProgressIndicator());
+                                },
+                                errorBuilder: (context, error, stackTrace) {
+                                  return const Icon(Icons.error, size: 50);
+                                },
+                              ),
 
-                                // Overlay gradasi hitam-transparan untuk kontras teks
-                                Container(
-                                  width: double.infinity,
-                                  height: 200,
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment.bottomCenter,
-                                      end: Alignment.topCenter,
-                                      colors: [
-                                        Colors.black.withOpacity(0.6),
-                                        Colors.transparent,
-                                      ],
-                                    ),
+                              // Overlay gradasi hitam-transparan untuk kontras teks
+                              Container(
+                                width: double.infinity,
+                                height: 200,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.bottomCenter,
+                                    end: Alignment.topCenter,
+                                    colors: [
+                                      Colors.black.withOpacity(0.6),
+                                      Colors.transparent,
+                                    ],
                                   ),
                                 ),
+                              ),
 
-                                // Konten teks di atas gambar
-                                Positioned.fill(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(16),
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          item['title']!,
-                                          style: const TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                          ),
+                              // Konten teks
+                              Positioned.fill(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        item.stretching, // GANTI: item['title']! menjadi item.stretching
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
                                         ),
-                                        const SizedBox(height: 8),
-                                        Row(
-                                          children: [
-                                            ElevatedButton(
-                                              onPressed: () {
-                                                controller
-                                                    .goToStretchingDetail(item);
-                                              },
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor:
-                                                    AppColors.forthColor,
-                                                foregroundColor:
-                                                    AppColors.primaryColor,
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 16,
-                                                        vertical: 8),
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Row(
+                                        children: [
+                                          ElevatedButton(
+                                            onPressed: () {
+                                              controller
+                                                  .goToStretchingDetail(item);
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  AppColors.forthColor,
+                                              foregroundColor:
+                                                  AppColors.primaryColor,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 16,
+                                                      vertical: 8),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
                                               ),
-                                              child: const Text("Lihat Detail"),
                                             ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
+                                            child: const Text("Lihat Detail"),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                        );
-                      },
-                    )),
+                        ),
+                      );
+                    },
+                  );
+                }),
               ),
             ],
           ),

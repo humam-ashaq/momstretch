@@ -134,12 +134,14 @@ class MovementDetail {
   final String? imageUrl;
   final String? videoId;
   final String movementDesc;
+  final String movementId;
 
   MovementDetail({
     required this.movement,
     this.imageUrl,
     this.videoId,
     required this.movementDesc,
+    required this.movementId,
   });
 
   factory MovementDetail.fromJson(Map<String, dynamic> json) {
@@ -148,6 +150,7 @@ class MovementDetail {
       imageUrl: json['imageUrl'],
       videoId: json['videoId'],
       movementDesc: json['movementDesc'],
+      movementId: json['movementId'],
     );
   }
 }

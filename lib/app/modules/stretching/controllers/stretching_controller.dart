@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -29,19 +28,21 @@ class StretchingController extends GetxController {
   var isVideoInitialized = false.obs;
   var isCameraInitialized = false.obs;
 
-  final userProgram = ''.obs; 
-  final stretchingList = <Stretching>[].obs; 
+  final userProgram = ''.obs;
+  final stretchingList = <Stretching>[].obs;
   final movementList = <Movement>[].obs;
 
   final selectedStretching = Rxn<Stretching>();
   final selectedMovementDetail = Rxn<MovementDetail>();
-  final selectedMovementTarget = ''.obs;
+  final selectedMovementId = ''.obs;
+
+  var movementStatusText = 'Arahkan kamera ke tubuh Anda'.obs;
 
   final Map<String, int> predictionCounter = {};
   static const int correctThreshold =
       5; // Jumlah deteksi berturut-turut untuk dianggap "benar"
   final RxString predictedLabel = ''.obs; // Untuk tampilan UI
-  
+
   @override
   void onInit() {
     super.onInit();
@@ -94,7 +95,8 @@ class StretchingController extends GetxController {
   Future<void> fetchStretchingList() async {
     try {
       isStretchingLoading.value = true;
-      final result = await _stretchingService.getStretchingList(userProgram.value);
+      final result =
+          await _stretchingService.getStretchingList(userProgram.value);
       stretchingList.assignAll(result);
     } catch (e) {
       Get.snackbar('Error', 'Gagal memuat daftar stretching: $e');
@@ -118,7 +120,8 @@ class StretchingController extends GetxController {
 
   void goToStretchingDetail(Stretching stretching) {
     selectedStretching.value = stretching;
-    fetchMovementList(stretching.stretching); // Fetch gerakan untuk stretching yg dipilih
+    fetchMovementList(
+        stretching.stretching); // Fetch gerakan untuk stretching yg dipilih
     Get.toNamed('/stretching-detail');
   }
 
@@ -127,8 +130,9 @@ class StretchingController extends GetxController {
       // Ambil detail lengkap termasuk videoId dan deskripsi
       final detail = await _stretchingService.getMovementDetail(movement.id);
       selectedMovementDetail.value = detail;
-      selectedMovementTarget.value = detail.movement; // set target untuk deteksi pose
-      
+      selectedMovementId.value =
+          detail.movementId; // set target untuk deteksi pose
+
       initializeVideoPlayer(); // Inisialisasi video setelah dapat detail
 
       Get.bottomSheet(
@@ -149,7 +153,6 @@ class StretchingController extends GetxController {
       Get.snackbar('Perhatian', 'Pilih gerakan terlebih dahulu.');
       return;
     }
-    await initializeCamera();
     Get.toNamed('/stretching-cam');
   }
 
@@ -160,7 +163,8 @@ class StretchingController extends GetxController {
       return;
     }
 
-    final videoUrl = Uri.parse('https://drive.google.com/uc?export=download&id=$videoId');
+    final videoUrl =
+        Uri.parse('https://drive.google.com/uc?export=download&id=$videoId');
     videoPlayerController = VideoPlayerController.networkUrl(videoUrl);
 
     try {
@@ -178,17 +182,18 @@ class StretchingController extends GetxController {
     isVideoInitialized.value = false;
   }
 
-
-
   Future<void> loadModel() async {
     try {
       interpreter = await Interpreter.fromAsset('assets/models/model.tflite');
-
       final labelData = await rootBundle.loadString('assets/labels/label.txt');
-      labels = labelData.split('\n').where((e) => e.trim().isNotEmpty).toList();
+      // Pastikan label bersih dari spasi atau baris kosong
+      labels = labelData
+          .split('\n')
+          .map((e) => e.trim())
+          .where((e) => e.isNotEmpty)
+          .toList();
 
-      debugPrint('✅ Model loaded');
-      debugPrint('Labels: ${labels.length}');
+      debugPrint('✅ Model dan ${labels.length} Label berhasil dimuat');
     } catch (e) {
       debugPrint("❌ Error loading model: $e");
     }
@@ -215,125 +220,166 @@ class StretchingController extends GetxController {
     await initializeCamera();
   }
 
+  // Di dalam StretchingController.dart
+
   void processCameraImage(CameraImage image) async {
-    if (interpreter == null || isDetecting) return;
-    isDetecting = true;
+    debugPrint("📸 FRAME DITERIMA! Timestamp: ${DateTime.now()}");
+    // Jangan proses jika interpreter belum siap, sedang memproses, atau belum ada gerakan yang dipilih
+    // if (interpreter == null || isDetecting || selectedMovementId.value.isEmpty)
+    //   return;
+    // isDetecting = true;
 
-    try {
-      // Gabungkan semua bytes dari citra kamera
-      final WriteBuffer allBytes = WriteBuffer();
-      for (final Plane plane in image.planes) {
-        allBytes.putUint8List(plane.bytes);
-      }
-      final bytes = allBytes.done().buffer.asUint8List();
+    // try {
+    //   // --- Langkah 1: Pre-processing Gambar (sama seperti sebelumnya) ---
+    //   final WriteBuffer allBytes = WriteBuffer();
+    //   for (final Plane plane in image.planes) {
+    //     allBytes.putUint8List(plane.bytes);
+    //   }
+    //   final bytes = allBytes.done().buffer.asUint8List();
 
-      // Ambil orientasi kamera
-      final rotation = InputImageRotationValue.fromRawValue(
-            cameraController!.description.sensorOrientation,
-          ) ??
-          InputImageRotation.rotation0deg;
+    //   final rotation = InputImageRotationValue.fromRawValue(
+    //           cameraController!.description.sensorOrientation) ??
+    //       InputImageRotation.rotation0deg;
+    //   final format = InputImageFormatValue.fromRawValue(image.format.raw);
+    //   if (format == null) {
+    //     isDetecting = false;
+    //     return;
+    //   }
 
-      // Format input image
-      final format = InputImageFormatValue.fromRawValue(image.format.raw);
-      if (format == null) {
-        debugPrint("❌ Format tidak didukung: ${image.format.raw}");
-        isDetecting = false;
-        return;
-      }
+    //   final inputImage = InputImage.fromBytes(
+    //     bytes: bytes,
+    //     metadata: InputImageMetadata(
+    //       size: Size(image.width.toDouble(), image.height.toDouble()),
+    //       rotation: rotation,
+    //       format: format,
+    //       bytesPerRow: image.planes[0].bytesPerRow,
+    //     ),
+    //   );
 
-      final inputImage = InputImage.fromBytes(
-        bytes: bytes,
-        metadata: InputImageMetadata(
-          size: Size(image.width.toDouble(), image.height.toDouble()),
-          rotation: rotation,
-          format: format,
-          bytesPerRow: image.planes[0].bytesPerRow,
-        ),
-      );
+    //   // --- Langkah 2: Deteksi Pose ---
+    //   final poses = await poseDetector.processImage(inputImage);
 
-      // Deteksi pose
-      final poses = await poseDetector.processImage(inputImage);
-      if (poses.isEmpty) return;
+    //   // DEBUG: Cek apakah pose terdeteksi
+    //   if (poses.isEmpty) {
+    //     debugPrint("👀 Tidak ada pose yang terdeteksi di frame ini.");
+    //     isDetecting = false;
+    //     return;
+    //   }
+    //   debugPrint("✅ Pose terdeteksi!");
 
-      // Ambil keypoints dari pose pertama
-      final List<double> keypoints = [];
-      for (var lmType in PoseLandmarkType.values) {
-        final lm = poses.first.landmarks[lmType];
-        keypoints.addAll(lm != null ? [lm.x, lm.y, lm.z] : [0.0, 0.0, 0.0]);
-      }
+    //   // --- Langkah 3: Ekstraksi Keypoints ---
+    //   final List<double> keypoints = [];
+    //   for (var lmType in PoseLandmarkType.values) {
+    //     final lm = poses.first.landmarks[lmType];
+    //     keypoints.addAll(lm != null ? [lm.x, lm.y, lm.z] : [0.0, 0.0, 0.0]);
+    //   }
+    //   if (keypoints.length != 99) {
+    //     isDetecting = false;
+    //     return;
+    //   }
 
-      // Pastikan format input ke model valid
-      if (keypoints.length != 99) return;
+    //   // --- Langkah 4: Jalankan Model TFLite ---
+    //   final input = [keypoints];
+    //   final output = List.generate(1, (_) => List.filled(labels.length, 0.0));
 
-      final input = [keypoints]; // shape [1, 99]
-      final output =
-          List.generate(1, (_) => List.filled(labels.length, 0.0)); // [1, 15]
+    //   debugPrint("🚀 Menjalankan model TFLite...");
+    //   interpreter!.run(input, output);
+    //   debugPrint("✅ Model TFLite selesai dijalankan.");
 
-      // Jalankan model
-      interpreter!.run(input, output);
-      final predictions = output[0];
+    //   final List<double> predictions = output[0];
 
-      // Prediksi label
-      final maxIndex =
-          predictions.indexWhere((e) => e == predictions.reduce(max));
-      if (maxIndex < 0 || maxIndex >= labels.length) return;
+    //   // --- Langkah 5: Cari Skor untuk Label Target ---
+    //   // DEBUG: Tampilkan label yang sedang dicari
+    //   debugPrint("🎯 Mencari label target: '${selectedMovementId.value}'");
 
-      final predicted = labels[maxIndex];
+    //   final int targetIndex = labels.indexOf(selectedMovementId.value);
 
-      // Evaluasi kebenaran berdasarkan label pilihan user
-      if (predicted == selectedMovementTarget.value) {
-        predictionCounter.update(predicted, (val) => val + 1,
-            ifAbsent: () => 1);
-      } else {
-        predictionCounter.clear();
-      }
+    //   // DEBUG: Cek apakah label ditemukan
+    //   if (targetIndex == -1) {
+    //     debugPrint(
+    //         "❌ FATAL: Label '${selectedMovementId.value}' tidak ditemukan di dalam file label.txt!");
+    //     debugPrint(
+    //         "Pastikan teks di database dan di label.txt sama persis (termasuk spasi/huruf besar-kecil).");
+    //     movementStatusText.value = 'Error: Label tidak cocok!';
+    //     isDetecting = false;
+    //     return;
+    //   }
+    //   debugPrint("✅ Label ditemukan di index: $targetIndex");
 
-      final count = predictionCounter[predicted] ?? 0;
-      final isCorrect = count >= correctThreshold;
+    //   // --- Langkah 6: Update UI Berdasarkan Skor ---
+    //   final double accuracy = predictions[targetIndex];
+    //   const double accuracyThreshold = 0.85;
 
-      predictedLabel.value =
-          "$predicted - ${isCorrect ? "✅ Sudah Benar" : "❌ Belum Benar"}";
-      debugPrint(
-          "🎯 Target: $selectedMovementTarget.value | Predicted: $predicted | Count: $count");
-    } catch (e) {
-      debugPrint("❌ Pose detection error: $e");
-    } finally {
-      isDetecting = false;
-    }
+    //   // DEBUG: Tampilkan skor akurasi
+    //   debugPrint(
+    //       "📊 Akurasi untuk '${selectedMovementId.value}': ${(accuracy * 100).toStringAsFixed(2)}%");
+
+    //   if (accuracy >= accuracyThreshold) {
+    //     movementStatusText.value = '✅ Gerakan Sudah Tepat';
+    //   } else {
+    //     movementStatusText.value = '❌ Gerakan Belum Sesuai';
+    //   }
+    // } catch (e) {
+    //   debugPrint("❌ Terjadi error saat deteksi: $e");
+    // } finally {
+    //   isDetecting = false;
+    // }
   }
 
+  // Di dalam StretchingController.dart
+
   Future<void> initializeCamera() async {
+    // Reset status untuk debug
+    isCameraInitialized.value = false;
+    debugPrint("--- [PROSES INISIALISASI KAMERA DIMULAI] ---");
+
     try {
+      // [DARI KODE ANDA] Memaksa orientasi menjadi landscape
+      debugPrint("1. Mengatur orientasi layar ke landscape...");
       await SystemChrome.setPreferredOrientations([
         DeviceOrientation.landscapeLeft,
         DeviceOrientation.landscapeRight,
       ]);
 
+      debugPrint("2. Mencari kamera depan...");
       final cameras = await availableCameras();
       final frontCam = cameras.firstWhere(
         (cam) => cam.lensDirection == CameraLensDirection.front,
+        orElse: () => cameras.first,
       );
+      debugPrint("3. Kamera depan ditemukan. Membuat CameraController...");
 
       cameraController = CameraController(
         frontCam,
         ResolutionPreset.medium,
-        enableAudio: false, // biasakan disable audio jika tak perlu
-        imageFormatGroup: ImageFormatGroup.nv21,
+        enableAudio: false,
+        // [DARI KODE SAYA] Memaksa format gambar yang kompatibel
+        imageFormatGroup: ImageFormatGroup.yuv420,
       );
 
       await cameraController!.initialize();
+      debugPrint("4. CameraController.initialize() SELESAI.");
+
+      debugPrint("5. MENCOBA MEMULAI IMAGE STREAM...");
       await cameraController!.startImageStream(processCameraImage);
+      debugPrint("6. ✅✅✅ startImageStream BERHASIL DIMULAI! Menunggu data...");
+
       isCameraInitialized.value = true;
-      update(); // trigger GetBuilder / Obx jika ada
-    } catch (e) {
-      print("Error initializing camera: $e");
+      update();
+      debugPrint(
+          "7. isCameraInitialized di-set ke true. UI seharusnya menampilkan preview.");
+    } catch (e, stacktrace) {
+      debugPrint("❌❌❌ FATAL ERROR di initializeCamera: $e");
+      debugPrint("Stacktrace: $stacktrace");
     }
   }
 
   // Dispose kamera saat keluar dari halaman
   void disposeCamera() {
+    cameraController?.stopImageStream();
     cameraController?.dispose();
     cameraController = null;
+    isCameraInitialized.value = false;
 
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,

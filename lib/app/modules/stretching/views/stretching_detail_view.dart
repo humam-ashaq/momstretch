@@ -18,114 +18,112 @@ class StretchingDetailView extends GetView<StretchingController> {
 
     return Scaffold(
       backgroundColor: AppColors.forthColor,
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Get.back(),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      stretching.stretching,
-                      style: const TextStyle(
-                        color: AppColors.primaryColor,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
+      body: SingleChildScrollView(
+        child: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () => Get.back(),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        stretching.stretching,
+                        style: const TextStyle(
+                          color: AppColors.primaryColor,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
+                  ],
+                ),
+              ),
+        
+              // Subjudul
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Container(
+                  alignment: Alignment.center,
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                ],
+                  child: Text(
+                    '${stretching.duration}, ${stretching.program}',
+                    style: const TextStyle(
+                        fontSize: 16, color: AppColors.primaryColor),
+                  ),
+                ),
               ),
-            ),
-
-            // Subjudul
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Container(
+        
+              const SizedBox(height: 12),
+        
+              // Deskripsi program
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    stretching.stretchingDesc, 
+                    style: const TextStyle(
+                        fontSize: 14, color: AppColors.primaryColor),
+                  ),
+                ),
+              ),
+        
+              const SizedBox(height: 24),
+        
+              // Label daftar gerakan
+              Container(
                 alignment: Alignment.center,
-                width: double.infinity,
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  '${stretching.duration}, ${stretching.program}',
-                  style: const TextStyle(
-                      fontSize: 16, color: AppColors.primaryColor),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 12),
-
-            // Deskripsi program
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  stretching.stretchingDesc, 
-                  style: const TextStyle(
-                      fontSize: 14, color: AppColors.primaryColor),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(
+                    'DAFTAR GERAKAN',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: AppColors.primaryColor),
+                  ),
                 ),
               ),
-            ),
+        
+              const SizedBox(height: 16),
 
-            const SizedBox(height: 24),
-
-            // Label daftar gerakan
-            Container(
-              alignment: Alignment.center,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16),
-                child: Text(
-                  'DAFTAR GERAKAN',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: AppColors.primaryColor),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 16),
-
-            // List gerakan
-            // List gerakan
-            Expanded(
-              child: Obx(() {
-                // Bungkus dengan Obx
-                // TAMBAHKAN: Cek loading state
+              // List gerakan
+              Obx(() {
                 if (controller.isMovementsLoading.value) {
                   return const Center(child: CircularProgressIndicator());
                 }
                 if (controller.movementList.isEmpty) {
-                  return const Center(
-                      child: Text("Tidak ada gerakan untuk program ini."));
+                  return const Center(child: Text("Tidak ada gerakan untuk program ini."));
                 }
-                // ---
                 return ListView.builder(
-                  itemCount:
-                      controller.movementList.length, // Ganti ke movementList
+                  // TAMBAHKAN properti ini
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  // ---
+                  itemCount: controller.movementList.length,
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   itemBuilder: (context, index) {
-                    final item = controller.movementList[
-                        index]; // item sekarang bertipe 'Movement'
+                    final item = controller.movementList[index];
                     return Card(
+                      // ... sisa kode Card tidak berubah ...
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -138,29 +136,25 @@ class StretchingDetailView extends GetView<StretchingController> {
                           children: [
                             Row(
                               children: [
-                                // GANTI Image.asset menjadi Image.network
                                 Image.network(
-                                  item.imageUrl ??
-                                      'https://via.placeholder.com/48x48?text=N/A',
+                                  item.imageUrl ?? 'https://via.placeholder.com/48x48?text=N/A',
                                   width: 48,
                                   height: 48,
-                                  // Tambahkan loading dan error builder jika perlu
                                 ),
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: Text(
                                     item.movement,
                                     style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                        color: AppColors.primaryColor),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                      color: AppColors.primaryColor,
+                                    ),
                                   ),
                                 ),
                               ],
                             ),
-                            Divider(
-                              color: AppColors.secondaryColor,
-                            ),
+                            const Divider(color: AppColors.secondaryColor),
                             TextButton(
                               onPressed: () {
                                 controller.showMovementDetail(item);
@@ -169,8 +163,7 @@ class StretchingDetailView extends GetView<StretchingController> {
                                 children: [
                                   Text(
                                     "Lihat Detail",
-                                    style: TextStyle(
-                                        color: AppColors.primaryColor),
+                                    style: TextStyle(color: AppColors.primaryColor),
                                   ),
                                   SizedBox(width: 4),
                                   Icon(
@@ -187,8 +180,8 @@ class StretchingDetailView extends GetView<StretchingController> {
                   },
                 );
               }),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

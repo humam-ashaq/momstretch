@@ -42,6 +42,17 @@ android {
             signingConfig = signingConfigs.debug
         }
     }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            def appName = "Momstretch+" // Ganti sesuai nama aplikasi kamu
+            def buildType = variant.buildType.name
+            def versionName = variant.versionName
+            def versionCode = variant.versionCode
+
+            outputFileName = "${appName}-${buildType}-v${versionName}(${versionCode}).apk"
+        }
+    }
 }
 
 flutter {

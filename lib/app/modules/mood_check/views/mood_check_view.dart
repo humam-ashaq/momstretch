@@ -36,8 +36,7 @@ class MoodCheckView extends GetView<MoodCheckController> {
                           style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
-                              color: AppColors.primaryColor
-                            ),
+                              color: AppColors.primaryColor),
                         ),
                         const SizedBox(height: 16),
                         GestureDetector(
@@ -83,8 +82,7 @@ class MoodCheckView extends GetView<MoodCheckController> {
                           style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
-                              color: AppColors.primaryColor
-                            ),
+                              color: AppColors.primaryColor),
                         ),
                         const SizedBox(height: 12),
                         Obx(() => Container(
@@ -101,15 +99,13 @@ class MoodCheckView extends GetView<MoodCheckController> {
                                     style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 14,
-                                        color: AppColors.primaryColor
-                                      ),
+                                        color: AppColors.primaryColor),
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
                                     controller.epdsResult,
                                     style: TextStyle(
-                                      color: AppColors.primaryColor
-                                    ),
+                                        color: AppColors.primaryColor),
                                   ),
                                 ],
                               ),
@@ -131,14 +127,15 @@ class MoodCheckView extends GetView<MoodCheckController> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 16,),
+                      const SizedBox(
+                        height: 16,
+                      ),
                       const Text(
                         'Riwayat',
                         style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: AppColors.primaryColor
-                          ),
+                            color: AppColors.primaryColor),
                       ),
                       const SizedBox(height: 12),
                       Container(
@@ -147,47 +144,71 @@ class MoodCheckView extends GetView<MoodCheckController> {
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(16),
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Skor EPDS',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.primaryColor
+                        child: Obx(() {
+                          // Tampilkan Indikator Loading
+                          if (controller.isLoadingHistory.value) {
+                            return const Center(
+                              child: SizedBox(
+                                height: 150,
+                                child:
+                                    Center(child: CircularProgressIndicator()),
                               ),
-                            ),
-                            const SizedBox(height: 8),
-                            SizedBox(
-                              height: 150,
-                              child: LineChart(
-                                LineChartData(
-                                  gridData: FlGridData(show: false),
-                                  borderData: FlBorderData(show: false),
-                                  titlesData: FlTitlesData(show: false),
-                                  lineBarsData: [
-                                    LineChartBarData(
-                                      spots: controller.epdsHistory
-                                          .asMap()
-                                          .entries
-                                          .map((e) => FlSpot(
-                                                e.key.toDouble(),
-                                                e.value.toDouble(),
-                                              ))
-                                          .toList(),
-                                      isCurved: true,
-                                      color: AppColors.primaryColor,
-                                      barWidth: 3,
-                                      dotData: FlDotData(show: true),
-                                    ),
-                                  ],
+                            );
+                          }
+                          // Tampilkan Chart jika riwayat tidak kosong
+                          else if (controller.epdsHistory.isNotEmpty) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Skor EPDS',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.primaryColor),
                                 ),
+                                const SizedBox(height: 8),
+                                SizedBox(
+                                  height: 150,
+                                  child: LineChart(
+                                    LineChartData(
+                                      gridData: FlGridData(show: false),
+                                      borderData: FlBorderData(show: false),
+                                      titlesData: FlTitlesData(show: false),
+                                      lineBarsData: [
+                                        LineChartBarData(
+                                          spots: controller.epdsHistory
+                                              .asMap()
+                                              .entries
+                                              .map((e) => FlSpot(
+                                                  e.key.toDouble(),
+                                                  e.value.toDouble()))
+                                              .toList(),
+                                          isCurved: true,
+                                          color: AppColors.primaryColor,
+                                          barWidth: 3,
+                                          dotData: FlDotData(show: true),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          }
+                          // Tampilkan pesan jika tidak ada riwayat
+                          else {
+                            return const SizedBox(
+                              height: 150,
+                              child: Center(
+                                child: Text('Belum ada riwayat tes.'),
                               ),
-                            ),
-                          ],
-                        ),
+                            );
+                          }
+                        }),
                       ),
-                      const SizedBox(height: 16,)
+                      const SizedBox(
+                        height: 16,
+                      )
                     ],
                   ),
                 ),

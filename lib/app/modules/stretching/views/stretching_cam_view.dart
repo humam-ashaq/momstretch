@@ -3,8 +3,8 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mom_stretch/app/data/app_colors.dart';
 import '../controllers/stretching_controller.dart';
+import 'package:mom_stretch/app/data/app_colors.dart';
 
 class StretchingCamView extends StatefulWidget {
   const StretchingCamView({super.key});
@@ -19,11 +19,16 @@ class _StretchingCamViewState extends State<StretchingCamView> {
   @override
   void initState() {
     super.initState();
-    controller.initializeCamera();
+    controller.initializeCamera().then((_) {
+      if (mounted && controller.isCameraInitialized.value) {
+        controller.startRealtimeBackendDetection();
+      }
+    });
   }
 
   @override
   void dispose() {
+    controller.stopRealtimeBackendDetection();
     controller.disposeCamera();
     super.dispose();
   }
@@ -98,7 +103,7 @@ class _StretchingCamViewState extends State<StretchingCamView> {
               padding:
                   const EdgeInsets.only(left: 8, right: 16, top: 8, bottom: 8),
               decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.5),
+                  color: AppColors.primaryColor.withOpacity(0.75),
                   borderRadius: BorderRadius.circular(12)),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -140,7 +145,7 @@ class _StretchingCamViewState extends State<StretchingCamView> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.white, width: 2),
+                border: Border.all(color: AppColors.tertiaryColor, width: 2),
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(6),

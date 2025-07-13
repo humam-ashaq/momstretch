@@ -1,27 +1,26 @@
+import 'dart:async';
+import 'dart:convert';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart';
-import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:video_player/video_player.dart';
 import '../../../services/auth_service.dart';
 import '../../../services/stretching_service.dart';
 import '../views/stretching_detail_sheet.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 class StretchingController extends GetxController {
   final StretchingService _stretchingService = StretchingService();
-  Interpreter? interpreter;
+  bool _isLoopActive = false;
   List<String> labels = [];
   CameraController? cameraController;
   List<CameraDescription> cameras = [];
   int selectedCameraIndex = 0;
-  final poseDetector = PoseDetector(
-    options: PoseDetectorOptions(mode: PoseDetectionMode.stream),
-  );
   bool isDetecting = false;
   VideoPlayerController? videoPlayerController;
   final programController = TextEditingController();
+  final AudioPlayer _audioPlayer = AudioPlayer();
 
   var isStretchingLoading = true.obs;
   var isMovementsLoading = true.obs;
@@ -46,15 +45,15 @@ class StretchingController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    loadModel();
     fetchProfileAndStretching();
   }
 
   @override
   void onClose() {
     cameraController?.dispose();
-    interpreter?.close();
+    stopRealtimeBackendDetection();
     videoPlayerController?.dispose();
+    _audioPlayer.dispose();
     programController.dispose();
     super.onClose();
   }
@@ -147,12 +146,12 @@ class StretchingController extends GetxController {
     }
   }
 
-  void goToStretchingCamera() async {
-    // Pastikan movement sudah dipilih sebelum ke kamera
+  void goToStretchingCamera() {
     if (selectedMovementDetail.value == null) {
       Get.snackbar('Perhatian', 'Pilih gerakan terlebih dahulu.');
       return;
     }
+    selectedMovementId.value = selectedMovementDetail.value!.movementId;
     Get.toNamed('/stretching-cam');
   }
 
@@ -182,23 +181,6 @@ class StretchingController extends GetxController {
     isVideoInitialized.value = false;
   }
 
-  Future<void> loadModel() async {
-    try {
-      interpreter = await Interpreter.fromAsset('assets/models/model.tflite');
-      final labelData = await rootBundle.loadString('assets/labels/label.txt');
-      // Pastikan label bersih dari spasi atau baris kosong
-      labels = labelData
-          .split('\n')
-          .map((e) => e.trim())
-          .where((e) => e.isNotEmpty)
-          .toList();
-
-      debugPrint('✅ Model dan ${labels.length} Label berhasil dimuat');
-    } catch (e) {
-      debugPrint("❌ Error loading model: $e");
-    }
-  }
-
   Future<void> startCamera() async {
     cameras = await availableCameras();
     await initializeCamera();
@@ -220,167 +202,116 @@ class StretchingController extends GetxController {
     await initializeCamera();
   }
 
-  // Di dalam StretchingController.dart
-
-  void processCameraImage(CameraImage image) async {
-    debugPrint("📸 FRAME DITERIMA! Timestamp: ${DateTime.now()}");
-    // Jangan proses jika interpreter belum siap, sedang memproses, atau belum ada gerakan yang dipilih
-    // if (interpreter == null || isDetecting || selectedMovementId.value.isEmpty)
-    //   return;
-    // isDetecting = true;
-
-    // try {
-    //   // --- Langkah 1: Pre-processing Gambar (sama seperti sebelumnya) ---
-    //   final WriteBuffer allBytes = WriteBuffer();
-    //   for (final Plane plane in image.planes) {
-    //     allBytes.putUint8List(plane.bytes);
-    //   }
-    //   final bytes = allBytes.done().buffer.asUint8List();
-
-    //   final rotation = InputImageRotationValue.fromRawValue(
-    //           cameraController!.description.sensorOrientation) ??
-    //       InputImageRotation.rotation0deg;
-    //   final format = InputImageFormatValue.fromRawValue(image.format.raw);
-    //   if (format == null) {
-    //     isDetecting = false;
-    //     return;
-    //   }
-
-    //   final inputImage = InputImage.fromBytes(
-    //     bytes: bytes,
-    //     metadata: InputImageMetadata(
-    //       size: Size(image.width.toDouble(), image.height.toDouble()),
-    //       rotation: rotation,
-    //       format: format,
-    //       bytesPerRow: image.planes[0].bytesPerRow,
-    //     ),
-    //   );
-
-    //   // --- Langkah 2: Deteksi Pose ---
-    //   final poses = await poseDetector.processImage(inputImage);
-
-    //   // DEBUG: Cek apakah pose terdeteksi
-    //   if (poses.isEmpty) {
-    //     debugPrint("👀 Tidak ada pose yang terdeteksi di frame ini.");
-    //     isDetecting = false;
-    //     return;
-    //   }
-    //   debugPrint("✅ Pose terdeteksi!");
-
-    //   // --- Langkah 3: Ekstraksi Keypoints ---
-    //   final List<double> keypoints = [];
-    //   for (var lmType in PoseLandmarkType.values) {
-    //     final lm = poses.first.landmarks[lmType];
-    //     keypoints.addAll(lm != null ? [lm.x, lm.y, lm.z] : [0.0, 0.0, 0.0]);
-    //   }
-    //   if (keypoints.length != 99) {
-    //     isDetecting = false;
-    //     return;
-    //   }
-
-    //   // --- Langkah 4: Jalankan Model TFLite ---
-    //   final input = [keypoints];
-    //   final output = List.generate(1, (_) => List.filled(labels.length, 0.0));
-
-    //   debugPrint("🚀 Menjalankan model TFLite...");
-    //   interpreter!.run(input, output);
-    //   debugPrint("✅ Model TFLite selesai dijalankan.");
-
-    //   final List<double> predictions = output[0];
-
-    //   // --- Langkah 5: Cari Skor untuk Label Target ---
-    //   // DEBUG: Tampilkan label yang sedang dicari
-    //   debugPrint("🎯 Mencari label target: '${selectedMovementId.value}'");
-
-    //   final int targetIndex = labels.indexOf(selectedMovementId.value);
-
-    //   // DEBUG: Cek apakah label ditemukan
-    //   if (targetIndex == -1) {
-    //     debugPrint(
-    //         "❌ FATAL: Label '${selectedMovementId.value}' tidak ditemukan di dalam file label.txt!");
-    //     debugPrint(
-    //         "Pastikan teks di database dan di label.txt sama persis (termasuk spasi/huruf besar-kecil).");
-    //     movementStatusText.value = 'Error: Label tidak cocok!';
-    //     isDetecting = false;
-    //     return;
-    //   }
-    //   debugPrint("✅ Label ditemukan di index: $targetIndex");
-
-    //   // --- Langkah 6: Update UI Berdasarkan Skor ---
-    //   final double accuracy = predictions[targetIndex];
-    //   const double accuracyThreshold = 0.85;
-
-    //   // DEBUG: Tampilkan skor akurasi
-    //   debugPrint(
-    //       "📊 Akurasi untuk '${selectedMovementId.value}': ${(accuracy * 100).toStringAsFixed(2)}%");
-
-    //   if (accuracy >= accuracyThreshold) {
-    //     movementStatusText.value = '✅ Gerakan Sudah Tepat';
-    //   } else {
-    //     movementStatusText.value = '❌ Gerakan Belum Sesuai';
-    //   }
-    // } catch (e) {
-    //   debugPrint("❌ Terjadi error saat deteksi: $e");
-    // } finally {
-    //   isDetecting = false;
-    // }
+  void startRealtimeBackendDetection() {
+    debugPrint("🚀 Memulai loop deteksi cerdas...");
+    if (_isLoopActive) return; // Mencegah loop ganda
+    _isLoopActive = true;
+    _runDetectionLoop(); // Panggil loop untuk pertama kali
   }
 
-  // Di dalam StretchingController.dart
+  void stopRealtimeBackendDetection() {
+    debugPrint("🛑 Menghentikan loop deteksi.");
+    _isLoopActive = false;
+  }
 
-  Future<void> initializeCamera() async {
-    // Reset status untuk debug
-    isCameraInitialized.value = false;
-    debugPrint("--- [PROSES INISIALISASI KAMERA DIMULAI] ---");
+  Future<void> _runDetectionLoop() async {
+    // Jika loop dihentikan di tengah jalan, jangan lanjutkan
+    if (!_isLoopActive) return;
+
+    // Jalankan satu siklus deteksi
+    await checkPoseWithBackend();
+
+    // Tentukan durasi delay berikutnya berdasarkan hasil deteksi
+    Duration nextDelay;
+    if (movementStatusText.value == '✅ Gerakan Sudah Tepat') {
+      nextDelay = const Duration(seconds: 15);
+      debugPrint(
+          "Status Benar. Menunggu 15 detik untuk pengecekan berikutnya...");
+    } else {
+      nextDelay = const Duration(seconds: 2);
+      debugPrint(
+          "Status Belum Sesuai. Menunggu 2 detik untuk pengecekan berikutnya...");
+    }
+
+    // Jadwalkan eksekusi berikutnya setelah delay selesai
+    Future.delayed(nextDelay, _runDetectionLoop);
+  }
+
+  Future<void> checkPoseWithBackend() async {
+    if (cameraController == null || !cameraController!.value.isInitialized) {
+      return;
+    }
 
     try {
-      // [DARI KODE ANDA] Memaksa orientasi menjadi landscape
-      debugPrint("1. Mengatur orientasi layar ke landscape...");
+      movementStatusText.value = 'Menganalisis...';
+
+      final XFile imageFile = await cameraController!.takePicture();
+      final imageBytes = await imageFile.readAsBytes();
+      final String base64Image = base64Encode(imageBytes);
+
+      // Panggil service untuk melakukan API call
+      final result = await _stretchingService.detectPose(
+        base64Image: base64Image,
+        targetLabel: selectedMovementId.value,
+      );
+
+      // 1. Simpan status baru dari hasil API
+      final newStatus = result['status'] ?? 'Gagal memproses';
+
+      // 2. Cek apakah statusnya berubah dari sebelumnya (untuk mencegah suara berulang)
+      if (movementStatusText.value != newStatus) {
+        // 3. Update teks di layar
+        movementStatusText.value = newStatus;
+
+        // 4. Mainkan suara berdasarkan status yang baru
+        if (newStatus == '✅ Gerakan Sudah Tepat') {
+          _playCorrectSound();
+        } else if (newStatus == '❌ Gerakan Belum Sesuai') {
+          _playIncorrectSound();
+        }
+      }
+    } catch (e) {
+      movementStatusText.value = 'Error: Cek koneksi';
+      debugPrint("Error saat checkPoseWithBackend: $e");
+    }
+  }
+
+  void _playCorrectSound() {
+    _audioPlayer.play(AssetSource('audio/correct.mp3'));
+  }
+
+  void _playIncorrectSound() {
+    _audioPlayer.play(AssetSource('audio/incorrect.mp3'));
+  }
+
+  Future<void> initializeCamera() async {
+    isCameraInitialized.value = false;
+    try {
       await SystemChrome.setPreferredOrientations([
         DeviceOrientation.landscapeLeft,
         DeviceOrientation.landscapeRight,
       ]);
-
-      debugPrint("2. Mencari kamera depan...");
       final cameras = await availableCameras();
       final frontCam = cameras.firstWhere(
         (cam) => cam.lensDirection == CameraLensDirection.front,
         orElse: () => cameras.first,
       );
-      debugPrint("3. Kamera depan ditemukan. Membuat CameraController...");
-
       cameraController = CameraController(
         frontCam,
-        ResolutionPreset.medium,
+        ResolutionPreset.medium, // Resolusi medium sudah cukup untuk dikirim
         enableAudio: false,
-        // [DARI KODE SAYA] Memaksa format gambar yang kompatibel
-        imageFormatGroup: ImageFormatGroup.yuv420,
       );
-
       await cameraController!.initialize();
-      debugPrint("4. CameraController.initialize() SELESAI.");
-
-      debugPrint("5. MENCOBA MEMULAI IMAGE STREAM...");
-      await cameraController!.startImageStream(processCameraImage);
-      debugPrint("6. ✅✅✅ startImageStream BERHASIL DIMULAI! Menunggu data...");
-
       isCameraInitialized.value = true;
-      update();
-      debugPrint(
-          "7. isCameraInitialized di-set ke true. UI seharusnya menampilkan preview.");
-    } catch (e, stacktrace) {
-      debugPrint("❌❌❌ FATAL ERROR di initializeCamera: $e");
-      debugPrint("Stacktrace: $stacktrace");
+    } catch (e) {
+      debugPrint("❌ FATAL ERROR di initializeCamera: $e");
     }
   }
 
   // Dispose kamera saat keluar dari halaman
   void disposeCamera() {
-    cameraController?.stopImageStream();
     cameraController?.dispose();
-    cameraController = null;
     isCameraInitialized.value = false;
-
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,

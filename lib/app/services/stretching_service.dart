@@ -76,6 +76,37 @@ class StretchingService {
       throw Exception('Error saat mengambil detail gerakan: $e');
     }
   }
+
+  Future<Map<String, dynamic>> detectPose({
+    required String base64Image,
+    required String targetLabel,
+  }) async {
+    // Gunakan getHeaders yang sudah Anda punya
+    final headers = getHeaders(withAuth: true); 
+
+    try {
+      final response = await http
+          .post(
+            Uri.parse('$baseUrl/api/detect'),
+            headers: headers,
+            body: jsonEncode({
+              'image': base64Image,
+              'target_label': targetLabel,
+            }),
+          )
+          .timeout(const Duration(seconds: 15)); // Timeout jika server lambat
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        // Mengembalikan pesan error dari server jika ada
+        return {'status': 'Error: ${response.statusCode}'};
+      }
+    } catch (e) {
+      // Mengembalikan pesan error jika gagal terhubung
+      return {'status': 'Error: Cek koneksi'};
+    }
+  }
 }
 
 // === MODELS ===

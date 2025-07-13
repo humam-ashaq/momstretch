@@ -81,7 +81,7 @@ class ProfileView extends GetView<ProfileController> {
                         ? controller.nama.value
                         : "Nama Pengguna",
                     style:
-                        TextStyle(fontSize: 24, color: AppColors.primaryColor),
+                        TextStyle(fontSize: 24, color: AppColors.primaryColor, fontWeight: FontWeight.bold),
                   )),
 
               // Email - Dynamic
@@ -99,10 +99,11 @@ class ProfileView extends GetView<ProfileController> {
                   Icons.book,
                   color: AppColors.primaryColor,
                 ),
-                title: Text(
-                  'Persalinan Normal',
-                  style: TextStyle(color: AppColors.primaryColor),
-                ),
+                title: Obx(() => Text(
+                    controller.selectedProgram.value,
+                    style:
+                        TextStyle(color: AppColors.primaryColor),
+                  )),
                 subtitle: const Text(
                   'Program Stretching',
                   style: TextStyle(color: AppColors.primaryColor),

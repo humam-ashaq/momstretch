@@ -8,89 +8,132 @@ class ProfileEditView extends GetView<ProfileController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(title: const Text('Edit Profil', style: TextStyle(
-        color: AppColors.primaryColor
-      ),), backgroundColor: Colors.white,),
+      appBar: PreferredSize(
+          preferredSize: Size.fromHeight(60),
+          child: Container(
+            decoration: BoxDecoration(boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                offset: const Offset(0, 1),
+                blurRadius: 1,
+                spreadRadius: 1,
+              )
+            ]),
+            child: AppBar(
+              backgroundColor: Colors.white,
+              automaticallyImplyLeading: false,
+              title: Padding(
+                padding: const EdgeInsets.fromLTRB(12, 30, 12, 24),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                      icon: Icon(
+                        Icons.arrow_back_ios,
+                        color: AppColors.primaryColor,
+                      ),
+                      onPressed: () => Get.back(),
+                    ),
+                    Text(
+                      'MOMSTRETCH+',
+                      style: TextStyle(
+                        letterSpacing: 2,
+                        fontFamily: 'HammersmithOne',
+                        fontWeight: FontWeight.normal,
+                        fontSize: 20,
+                        color: Color.fromARGB(1000, 235, 203, 143),
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(
+                        Icons.history,
+                        color: Colors.transparent
+                      ),
+                      onPressed: () {
+                      },
+                    )
+                  ],
+                ),
+              ),
+            ),
+          )),
       body: Obx(() {
         if (controller.isLoading.value) {
           return const Center(child: CircularProgressIndicator());
         }
         return Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(24.0),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              TextField(
-                controller: controller.usiaC,
-                decoration: const InputDecoration(
-                  labelText: 'Usia',
-                  hintText: 'Masukkan usia',
-                  fillColor: AppColors.primaryColor
+              const Text(
+                'Edit Profil',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primaryColor,
+                  height: 1.5,
                 ),
-                keyboardType: TextInputType.number,
               ),
               const SizedBox(height: 16),
-              Text('Foto Profil', style: TextStyle(fontSize: 16)),
-              const SizedBox(height: 8),
-              Obx(() {
-                final imageFile = controller.selectedImage.value;
-                return Column(
-                  children: [
-                    GestureDetector(
-                      onTap: controller.pickImageFromGallery,
-                      child: Container(
-                        width: 120,
-                        height: 120,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: imageFile != null
-                              ? DecorationImage(
-                                  image: FileImage(imageFile),
-                                  fit: BoxFit.cover)
-                              : controller.fotoProfil.value.isNotEmpty
-                                  ? DecorationImage(
-                                      image: NetworkImage(
-                                          controller.fotoProfil.value),
-                                      fit: BoxFit.cover)
-                                  : null,
-                          color: Colors.grey[300],
-                        ),
-                        child: imageFile == null &&
-                                controller.fotoProfil.value.isEmpty
-                            ? Icon(Icons.camera_alt,
-                                size: 40, color: Colors.grey[700])
-                            : null,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    TextButton(
-                      onPressed: controller.pickImageFromGallery,
-                      child: Text('Pilih dari Galeri', style: TextStyle(
-                        color: AppColors.primaryColor
-                      ),),
-                    ),
-                  ],
-                );
-              }),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryColor
+              TextField(
+                controller: controller.namaC,
+                decoration: const InputDecoration(
+                  labelText: 'Nama Lengkap',
+                  hintText: 'Masukkan nama lengkap',
+                  border: OutlineInputBorder(),
                 ),
-                onPressed: () {
-                  controller.updateProfile();
-                },
-                child: controller.isLoading.value
-                    ? const SizedBox(
-                        height: 24,
-                        width: 24,
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 2,
+                keyboardType: TextInputType.name,
+              ),
+              const SizedBox(height: 24),
+              Obx(
+                () => DropdownButtonFormField<String>(
+                  value: controller.selectedProgram.value,
+                  decoration: const InputDecoration(
+                    labelText: 'Program Persalinan',
+                    border: OutlineInputBorder(),
+                  ),
+                  items: controller.programOptions
+                      .map((String value) => DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          ))
+                      .toList(),
+                  onChanged: (String? newValue) {
+                    if (newValue != null) {
+                      controller.selectedProgram.value = newValue;
+                    }
+                  },
+                ),
+              ),
+              const SizedBox(height: 32),
+              // Tombol Update
+              Obx(
+                () => ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primaryColor,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  onPressed: controller.isLoading.value
+                      ? null // Nonaktifkan tombol saat loading
+                      : () => controller.updateProfile(),
+                  child: controller.isLoading.value
+                      ? const SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : const Text(
+                          'Simpan Perubahan',
+                          style: TextStyle(color: Colors.white, fontSize: 16),
                         ),
-                      )
-                    : const Text('Update Profil', style: TextStyle(
-                      color: Colors.white
-                    ),),
+                ),
               ),
             ],
           ),

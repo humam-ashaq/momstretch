@@ -363,14 +363,24 @@ class AuthService {
   }
 
   static Future<Map<String, dynamic>> updateProfile(
-      String usia, String fotoProfil) async {
+      String nama, String program) async { // Diubah: Menerima nama dan program
     try {
+      // Mengonversi program kembali ke format database ('normal' atau 'caesar')
+      String programForDb;
+      if (program == 'Persalinan Normal') {
+        programForDb = 'normal';
+      } else if (program == 'Persalinan Operasi Caesar') {
+        programForDb = 'caesar';
+      } else {
+        programForDb = program; // fallback
+      }
+
       final response = await http.put(
         Uri.parse('$baseUrl/profile'),
         headers: getHeaders(withAuth: true),
         body: json.encode({
-          'usia': usia,
-          'foto_profil': fotoProfil,
+          'nama': nama,       // Diubah: Kirim nama
+          'program': programForDb, // Diubah: Kirim program
         }),
       );
 

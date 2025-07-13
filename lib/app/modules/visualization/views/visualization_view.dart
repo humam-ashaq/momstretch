@@ -137,21 +137,23 @@ class VisualizationView extends GetView<VisualizationController> {
                 Text(
                   'Visualisasi Artikel',
                   style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.primaryColor,
-                    ),
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primaryColor,
+                  ),
                 ),
+                const SizedBox(height: 16),
+
                 // Summary Cards
                 _buildSummaryCards(controller),
                 const SizedBox(height: 24),
-                
-                // Top Words Chart (Horizontal Bar Chart)
-                _buildTopWordsChart(controller),
-                const SizedBox(height: 24),
-                
+
                 // Monthly Posts Chart (Vertical Bar Chart)
                 _buildMonthlyPostsChart(controller),
+                const SizedBox(height: 24),
+
+                // Top Words Chart (Horizontal Bar Chart)
+                _buildTopWordsChart(controller),
               ],
             ),
           ),
@@ -185,7 +187,7 @@ class VisualizationView extends GetView<VisualizationController> {
                     ),
                   ),
                   const Text(
-                    'Total Posts',
+                    'Jumlah Postingan',
                     style: TextStyle(
                       color: Colors.grey,
                     ),
@@ -218,7 +220,7 @@ class VisualizationView extends GetView<VisualizationController> {
                     ),
                   ),
                   const Text(
-                    'Total Words',
+                    'Jumlah Kata',
                     style: TextStyle(
                       color: Colors.grey,
                     ),
@@ -234,7 +236,7 @@ class VisualizationView extends GetView<VisualizationController> {
 
   Widget _buildTopWordsChart(VisualizationController controller) {
     final topWords = controller.getTopWords(10);
-    
+
     return Card(
       color: AppColors.forthColor,
       child: Padding(
@@ -256,7 +258,9 @@ class VisualizationView extends GetView<VisualizationController> {
               child: BarChart(
                 BarChartData(
                   alignment: BarChartAlignment.spaceAround,
-                  maxY: topWords.isNotEmpty ? topWords.first.count.toDouble() * 1.2 : 100,
+                  maxY: topWords.isNotEmpty
+                      ? topWords.first.count.toDouble() * 1.2
+                      : 100,
                   barTouchData: BarTouchData(
                     touchTooltipData: BarTouchTooltipData(
                       getTooltipColor: (group) => Colors.blueGrey,
@@ -292,15 +296,19 @@ class VisualizationView extends GetView<VisualizationController> {
                         getTitlesWidget: (value, meta) {
                           final index = value.toInt();
                           if (index >= 0 && index < topWords.length) {
-                            return Padding(
-                              padding: const EdgeInsets.only(top: 8),
-                              child: Text(
-                                topWords[index].word,
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
+                            return Transform.translate(
+                              offset: const Offset(-16, 0),
+                              child: SideTitleWidget(
+                                // Gunakan SideTitleWidget
+                                axisSide: meta.axisSide,
+                                space: 16.0,
+                                angle: -45 *
+                                    (3.14159265359 / 180), // Konversi ke radian
+                                child: Text(
+                                  controller.getFormattedMonth(
+                                      topWords[index].word),
+                                  style: const TextStyle(fontSize: 12),
                                 ),
-                                textAlign: TextAlign.center,
                               ),
                             );
                           }
@@ -319,8 +327,8 @@ class VisualizationView extends GetView<VisualizationController> {
                   barGroups: topWords.asMap().entries.map((entry) {
                     final index = entry.key;
                     final word = entry.value;
-                    final colors = controller.getChartColors();
-                    
+                    final colors = controller.getWordsChartColors();
+
                     return BarChartGroupData(
                       x: index,
                       barRods: [
@@ -346,8 +354,9 @@ class VisualizationView extends GetView<VisualizationController> {
   }
 
   Widget _buildMonthlyPostsChart(VisualizationController controller) {
-    final monthlyData = controller.getRecentMonthlyData(12); // Get last 12 months
-    
+    final monthlyData =
+        controller.getRecentMonthlyData(12); // Get last 12 months
+
     return Card(
       color: AppColors.forthColor,
       child: Padding(
@@ -369,8 +378,12 @@ class VisualizationView extends GetView<VisualizationController> {
               child: BarChart(
                 BarChartData(
                   alignment: BarChartAlignment.spaceAround,
-                  maxY: monthlyData.isNotEmpty 
-                      ? monthlyData.map((e) => e.count).reduce((a, b) => a > b ? a : b).toDouble() * 1.2 
+                  maxY: monthlyData.isNotEmpty
+                      ? monthlyData
+                              .map((e) => e.count)
+                              .reduce((a, b) => a > b ? a : b)
+                              .toDouble() *
+                          1.2
                       : 10,
                   barTouchData: BarTouchData(
                     touchTooltipData: BarTouchTooltipData(
@@ -407,12 +420,19 @@ class VisualizationView extends GetView<VisualizationController> {
                         getTitlesWidget: (value, meta) {
                           final index = value.toInt();
                           if (index >= 0 && index < monthlyData.length) {
-                            return Padding(
-                              padding: const EdgeInsets.only(top: 8),
-                              child: Text(
-                                controller.getFormattedMonth(monthlyData[index].month),
-                                style: const TextStyle(fontSize: 12),
-                                textAlign: TextAlign.center,
+                            return Transform.translate(
+                              offset: const Offset(-16, 0),
+                              child: SideTitleWidget(
+                                // Gunakan SideTitleWidget
+                                axisSide: meta.axisSide,
+                                space: 16.0,
+                                angle: -45 *
+                                    (3.14159265359 / 180), // Konversi ke radian
+                                child: Text(
+                                  controller.getFormattedMonth(
+                                      monthlyData[index].month),
+                                  style: const TextStyle(fontSize: 12),
+                                ),
                               ),
                             );
                           }
@@ -431,8 +451,8 @@ class VisualizationView extends GetView<VisualizationController> {
                   barGroups: monthlyData.asMap().entries.map((entry) {
                     final index = entry.key;
                     final data = entry.value;
-                    final colors = controller.getChartColors();
-                    
+                    final colors = controller.getPostsChartColors();
+
                     return BarChartGroupData(
                       x: index,
                       barRods: [

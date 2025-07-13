@@ -33,8 +33,6 @@ import '../modules/profile/views/profile_edit_view.dart';
 import '../modules/profile/views/profile_view.dart';
 import '../modules/program/bindings/program_binding.dart';
 import '../modules/program/views/program_view.dart';
-import '../modules/reminder/bindings/reminder_binding.dart';
-import '../modules/reminder/views/reminder_view.dart';
 import '../modules/splash/bindings/splash_binding.dart';
 import '../modules/splash/views/splash_view.dart';
 import '../modules/stretching/bindings/stretching_binding.dart';
@@ -151,11 +149,6 @@ class AppPages {
       name: _Paths.FORGOT_RESET,
       page: () => ForgotPasswordNewPasswordView(),
       binding: ForgotPasswordBinding(),
-    ),
-    GetPage(
-      name: _Paths.REMINDER,
-      page: () => ReminderView(),
-      binding: ReminderBinding(),
     ),
     GetPage(
       name: _Paths.ARTICLE,

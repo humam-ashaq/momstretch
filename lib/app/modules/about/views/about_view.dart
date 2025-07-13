@@ -28,7 +28,7 @@ class AboutView extends GetView<AboutController> {
             title: Padding(
               padding: const EdgeInsets.fromLTRB(8, 30, 8, 24),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   IconButton(
                     icon: Icon(
@@ -37,16 +37,6 @@ class AboutView extends GetView<AboutController> {
                     ),
                     onPressed: () => Get.back(),
                   ),
-                  Text(
-                    'Tentang',
-                    style: TextStyle(
-                      letterSpacing: 2,
-                      fontWeight: FontWeight.normal,
-                      fontSize: 20,
-                      color: AppColors.primaryColor,
-                    ),
-                  ),
-                  const Spacer(),
                   Text(
                     'MOMSTRETCH+',
                     style: TextStyle(
@@ -57,6 +47,10 @@ class AboutView extends GetView<AboutController> {
                       color: Color.fromARGB(1000, 235, 203, 143),
                     ),
                   ),
+                  IconButton(
+                    icon: const Icon(Icons.history, color: Colors.transparent),
+                    onPressed: () {},
+                  )
                 ],
               ),
             ),
@@ -65,8 +59,18 @@ class AboutView extends GetView<AboutController> {
         ),
       ),
       body: ListView(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(24.0),
         children: [
+          const Text(
+            'Tentang Kami',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: AppColors.primaryColor,
+              height: 1.5,
+            ),
+          ),
+          const SizedBox(height: 16),
           ExpansionTile(
             leading: Icon(Icons.phone, color: AppColors.primaryColor),
             title: Text('Kontak Kami',
@@ -107,8 +111,7 @@ class AboutView extends GetView<AboutController> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Text(
-                  'MOMSTRETCH+ merupakan aplikasi yang dibuat untuk membantu para ibu nifas dalam melakukan senam/peregangan ibu nifas secara mandiri, kapan pun dan di mana pun. MOMSTRETCH+ dapat mendampingi bunda selayaknya instruktur senam/peregangan ibu nifas.'
-                ),
+                    'MOMSTRETCH+ merupakan aplikasi yang dibuat untuk membantu para ibu nifas dalam melakukan senam/peregangan ibu nifas secara mandiri, kapan pun dan di mana pun. MOMSTRETCH+ dapat mendampingi bunda selayaknya instruktur senam/peregangan ibu nifas.'),
               ),
             ],
           ),

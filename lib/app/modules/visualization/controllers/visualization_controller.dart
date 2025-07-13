@@ -66,18 +66,23 @@ class VisualizationController extends GetxController {
   }
 
   // Helper method to get color for charts
-  List<int> getChartColors() {
+  List<int> getWordsChartColors() {
     return [
-      0xFF6366F1, // Indigo
-      0xFF8B5CF6, // Violet
-      0xFFA855F7, // Purple
-      0xFFD946EF, // Fuchsia
-      0xFFEC4899, // Pink
-      0xFFF43F5E, // Rose
-      0xFFF97316, // Orange
-      0xFFEAB308, // Yellow
-      0xFF84CC16, // Lime
-      0xFF22C55E, // Green
+      0xFF90EE90,
+      0xFF00FF00,
+      0xFF228B22,
+      0xFF008080,
+      0xFF8A9A5B,
+    ];
+  }
+
+  List<int> getPostsChartColors() {
+    return [
+      0xFF00FFFF,
+      0xFF87CEEB,
+      0xFF4682B4,
+      0xFF000080,
+      0xFF4B0082,
     ];
   }
 

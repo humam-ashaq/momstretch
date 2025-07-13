@@ -1,8 +1,7 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:mom_stretch/app/modules/home/controllers/home_controller.dart';
+import 'package:mom_stretch/app/modules/stretching/controllers/stretching_controller.dart';
 import '../../../services/auth_service.dart';
 
 class ProfileController extends GetxController {
@@ -12,8 +11,15 @@ class ProfileController extends GetxController {
   var usia = ''.obs;
   var fotoProfil = ''.obs;
   var isLoading = true.obs;
-  final usiaC = TextEditingController();
-  final fotoProfilC = TextEditingController();
+  final namaC = TextEditingController();
+  var selectedProgram = 'Pilih Program'.obs;
+
+  // List opsi untuk dropdown
+  final List<String> programOptions = [
+    'Pilih Program',
+    'Persalinan Normal',
+    'Persalinan Operasi Caesar'
+  ];
 
   @override
   void onInit() {
@@ -22,61 +28,69 @@ class ProfileController extends GetxController {
   }
 
   Future<void> fetchProfile() async {
-    final token = AuthService.getToken();
-    print('Token fetch: ${token}');
-    isLoading.value = true;
-    final result = await AuthService.getProfile();
-    if (result['success']) {
-      final data = result['data'];
-      nama.value = data['nama'] ?? '';
-      email.value = data['email'] ?? '';
-      usia.value = data['usia']?.toString() ?? '';
-      fotoProfil.value = data['foto_profil'] ?? '';
-      final programFromDb = data['program'] ?? '';
+    try {
+      isLoading.value = true;
+      final result = await AuthService.getProfile();
+      if (result['success']) {
+        final data = result['data'];
+        email.value = data['email'] ?? '';
+        nama.value = data['nama'] ?? '';
+        namaC.text = data['nama'] ?? '';
 
-      String displayProgram;
-      switch (programFromDb.toLowerCase()) {
-        case 'normal':
-          displayProgram = 'Persalinan Normal';
-          break;
-        case 'caesar':
-          displayProgram = 'Persalinan Operasi Caesar';
-          break;
-        default:
-          displayProgram = 'Program Belum Dipilih';
+        // Konversi nilai 'program' dari DB ke teks yang ditampilkan di UI
+        final programFromDb = data['program'] ?? '';
+        switch (programFromDb.toLowerCase()) {
+          case 'normal':
+            selectedProgram.value = 'Persalinan Normal';
+            break;
+          case 'caesar':
+            selectedProgram.value = 'Persalinan Operasi Caesar';
+            break;
+          default:
+            selectedProgram.value = 'Pilih Program';
+        }
+      } else {
+        Get.snackbar('Error', result['message'] ?? 'Gagal memuat profil.');
       }
-
-      program.value = displayProgram;
-
-      // Update controllers dengan data yang ada.
-      usiaC.text = usia.value;
-      fotoProfilC.text = fotoProfil.value;
+    } catch (e) {
+      Get.snackbar('Error', 'Terjadi kesalahan: ${e.toString()}');
+    } finally {
+      isLoading.value = false;
     }
-    isLoading.value = false;
   }
 
   Future<void> updateProfile() async {
-    isLoading.value = true;
-    final result = await AuthService.updateProfile(
-      usiaC.text,
-      fotoProfilC.text,
-    );
-    isLoading.value = false;
-    if (result['success']) {
-      Get.snackbar('Sukses', result['message']);
-      await fetchProfile(); // Refresh data profil
-    } else {
-      Get.snackbar('Error', result['message']);
+    // Validasi input
+    if (namaC.text.isEmpty) {
+      Get.snackbar('Gagal', 'Nama tidak boleh kosong.');
+      return;
     }
-  }
+    if (selectedProgram.value == 'Pilih Program') {
+      Get.snackbar('Gagal', 'Silakan pilih program persalinan.');
+      return;
+    }
 
-  var selectedImage = Rxn<File>(); // null-safe observable
+    try {
+      isLoading.value = true;
+      final result = await AuthService.updateProfile(
+        namaC.text,
+        selectedProgram.value,
+      );
 
-  Future<void> pickImageFromGallery() async {
-    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      selectedImage.value = File(pickedFile.path);
-      fotoProfilC.text = pickedFile.path; // Kalau backend masih pakai URL / path lokal
+      if (result['success']) {
+        Get.back(); // Kembali ke halaman profil
+        Get.snackbar('Sukses', result['message'] ?? 'Profil berhasil diperbarui.');
+        // Refresh data di halaman sebelumnya jika perlu (misal, dengan Get.find)
+        Get.find<ProfileController>().fetchProfile();
+        Get.find<HomeController>().fetchProfile();
+        Get.find<StretchingController>().fetchProfileAndStretching();
+      } else {
+        Get.snackbar('Error', result['message'] ?? 'Gagal memperbarui profil.');
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Terjadi kesalahan: ${e.toString()}');
+    } finally {
+      isLoading.value = false;
     }
   }
 
@@ -96,8 +110,6 @@ class ProfileController extends GetxController {
 
   @override
   void onClose() {
-    usiaC.dispose();
-    fotoProfilC.dispose();
     super.onClose();
   }
 }

@@ -8,6 +8,10 @@ class StretchingView extends GetView<StretchingController> {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.showDisclaimerPopup();
+    });
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -26,35 +30,52 @@ class StretchingView extends GetView<StretchingController> {
                 ),
               ),
               const SizedBox(height: 24),
-
-              TextFormField(
-                controller: controller
-                    .programController, // Gunakan controller dari GetX
-                readOnly: true, // Kunci utama: membuat field tidak bisa diedit
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  // Tambahkan ikon untuk memperjelas bahwa ini adalah info
-                  prefixIcon: const Icon(
-                    Icons.check_circle_outline,
-                    color: AppColors.primaryColor,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: controller
+                          .programController, // Gunakan controller dari GetX
+                      readOnly:
+                          true, // Kunci utama: membuat field tidak bisa diedit
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        // Tambahkan ikon untuk memperjelas bahwa ini adalah info
+                        prefixIcon: const Icon(
+                          Icons.check_circle_outline,
+                          color: AppColors.primaryColor,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                              color: AppColors.primaryColor, width: 1.5),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          // focusedBorder tetap ada untuk konsistensi
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                              color: AppColors.primaryColor, width: 1.5),
+                        ),
+                      ),
+                      style: const TextStyle(
+                          color: AppColors.primaryColor,
+                          fontWeight: FontWeight.w500),
+                    ),
                   ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide:
-                        BorderSide(color: AppColors.primaryColor, width: 1.5),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    // focusedBorder tetap ada untuk konsistensi
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide:
-                        BorderSide(color: AppColors.primaryColor, width: 1.5),
-                  ),
-                ),
-                style: const TextStyle(
-                    color: AppColors.primaryColor, fontWeight: FontWeight.w500),
+                  IconButton(
+                    icon: const Icon(
+                      Icons.history,
+                      color: AppColors.primaryColor,
+                    ),
+                    onPressed: () {
+                      controller.fetchHistory();
+                      Get.toNamed('/stretching-history');
+                    },
+                  )
+                ],
               ),
-
               const SizedBox(height: 24),
 
               // List Stretching

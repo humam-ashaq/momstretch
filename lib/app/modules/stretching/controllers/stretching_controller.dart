@@ -21,6 +21,8 @@ class StretchingController extends GetxController {
   VideoPlayerController? videoPlayerController;
   final programController = TextEditingController();
   final AudioPlayer _audioPlayer = AudioPlayer();
+  var isLoading = true.obs;
+  var historyList = <HistoryItem>[].obs;
 
   var isStretchingLoading = true.obs;
   var isMovementsLoading = true.obs;
@@ -147,10 +149,13 @@ class StretchingController extends GetxController {
   }
 
   void goToStretchingCamera() {
+     final movementDetail = selectedMovementDetail.value!;
     if (selectedMovementDetail.value == null) {
       Get.snackbar('Perhatian', 'Pilih gerakan terlebih dahulu.');
       return;
     }
+    _stretchingService.addHistory(movementDetail.movement);
+
     selectedMovementId.value = selectedMovementDetail.value!.movementId;
     Get.toNamed('/stretching-cam');
   }
@@ -316,5 +321,73 @@ class StretchingController extends GetxController {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
+  }
+
+  void showDisclaimerPopup() {
+    Timer? autoCloseTimer;
+    
+    // Tampilkan dialog
+    Get.dialog(
+      GestureDetector(
+        onTap: () {
+          autoCloseTimer?.cancel();
+          Get.back(); // Menutup dialog saat disentuh
+        },
+        child: Scaffold(
+          backgroundColor: Colors.black54,
+          body: Center(
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.info_outline, size: 48, color: Colors.orange),
+                  SizedBox(height: 16),
+                  Text(
+                    "Disclaimer",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.orange,
+                    ),
+                  ),
+                  SizedBox(height: 12),
+                  Text(
+                    "Perlu diketahui bahwa Anda harus selalu berkonsultasi dengan profesional medis sebelum memulai program latihan baru. Video-video ini bukan pengganti diagnosis medis atau saran medis individual. Selalu dengarkan tubuh Anda dan jika ada sesuatu yang terasa tidak tepat untuk Anda, hentikan.",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+      barrierDismissible: false,
+    );
+
+    // Auto-close dalam 10 detik
+    autoCloseTimer = Timer(const Duration(seconds: 10), () {
+      if (Get.isDialogOpen ?? false) {
+        Get.back();
+      }
+    });
+  }
+
+  void fetchHistory() async {
+    try {
+      isLoading.value = true;
+      var result = await _stretchingService.getHistory();
+      historyList.assignAll(result);
+    } catch (e) {
+      Get.snackbar('Error', 'Gagal memuat riwayat: ${e.toString()}');
+    } finally {
+      isLoading.value = false;
+    }
   }
 }

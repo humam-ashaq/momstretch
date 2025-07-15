@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "1071557902702-eh4k36o2s106ivo0vbeh7sg85s7fmnjo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "www.humem.com.mom_stretch",
+            "certificate_hash": "898a5cb7b0c4d64ac25fc2115b9acf3a9f7c3b45"
+          }
+        },
+        {
           "client_id": "1071557902702-ljtdqcfon5fc3139c0ggoe8harnhljge.apps.googleusercontent.com",
           "client_type": 3
         }

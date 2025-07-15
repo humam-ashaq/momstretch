@@ -107,6 +107,46 @@ class StretchingService {
       return {'status': 'Error: Cek koneksi'};
     }
   }
+
+  Future<bool> addHistory(String movementName) async {
+    // Pastikan request menyertakan token otentikasi
+    final headers = getHeaders(withAuth: true);
+
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/api/stretch_history'),
+        headers: headers,
+        body: jsonEncode({
+          'movement_name': movementName,
+        }),
+      );
+
+      // Jika berhasil (status 201 Created), kembalikan true
+      return response.statusCode == 201;
+    } catch (e) {
+      print('Error saat menyimpan history: $e');
+      return false;
+    }
+  }
+
+  Future<List<HistoryItem>> getHistory() async {
+    final headers = getHeaders(withAuth: true);
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/api/stretch_history'),
+        headers: headers,
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> parsed = json.decode(response.body);
+        return parsed.map((json) => HistoryItem.fromJson(json)).toList();
+      } else {
+        throw Exception('Gagal memuat riwayat');
+      }
+    } catch (e) {
+      throw Exception('Error saat mengambil riwayat: $e');
+    }
+  }
 }
 
 // === MODELS ===
@@ -182,6 +222,26 @@ class MovementDetail {
       videoId: json['videoId'],
       movementDesc: json['movementDesc'],
       movementId: json['movementId'],
+    );
+  }
+}
+
+class HistoryItem {
+  final String id;
+  final String movementName;
+  final String timestamp;
+
+  HistoryItem({
+    required this.id,
+    required this.movementName,
+    required this.timestamp,
+  });
+
+  factory HistoryItem.fromJson(Map<String, dynamic> json) {
+    return HistoryItem(
+      id: json['id'],
+      movementName: json['movement_name'],
+      timestamp: json['timestamp'],
     );
   }
 }

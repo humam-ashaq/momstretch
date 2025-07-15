@@ -38,6 +38,7 @@ import '../modules/splash/views/splash_view.dart';
 import '../modules/stretching/bindings/stretching_binding.dart';
 import '../modules/stretching/views/stretching_cam_view.dart';
 import '../modules/stretching/views/stretching_detail_view.dart';
+import '../modules/stretching/views/stretching_history_view.dart';
 import '../modules/stretching/views/stretching_view.dart';
 import '../modules/visualization/bindings/visualization_binding.dart';
 import '../modules/visualization/views/visualization_view.dart';
@@ -98,6 +99,11 @@ class AppPages {
     GetPage(
       name: _Paths.STRETCHING_DETAIL,
       page: () => StretchingDetailView(),
+      binding: StretchingBinding(),
+    ),
+    GetPage(
+      name: _Paths.STRETCHING_HISTORY,
+      page: () => StretchingHistoryView(),
       binding: StretchingBinding(),
     ),
     GetPage(

@@ -53,6 +53,7 @@ android {
             outputFileName = "${appName}-${buildType}-v${versionName}(${versionCode}).apk"
         }
     }
+
 }
 
 flutter {

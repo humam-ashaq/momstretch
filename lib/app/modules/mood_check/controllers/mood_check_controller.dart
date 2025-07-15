@@ -13,7 +13,7 @@ class MoodCheckController extends GetxController {
   var currentPage = 0.obs;
   PageController? pageController;
   Timer? _timer;
-  
+
   // Flag untuk memastikan tidak ada operasi pada controller yang sudah di-dispose
   bool isPageControllerActive = false;
 
@@ -21,105 +21,110 @@ class MoodCheckController extends GetxController {
   // Tambahkan dalam MoodCheckController
   final List<Map<String, dynamic>> epdsQuestions = [
     {
-      'question': 'Saya bisa tertawa dan melihat sisi lucu dari sesuatu.',
-      'options': [
-        {'text': 'Sebagaimana biasa', 'score': 0},
-        {'text': 'Agak kurang dari biasanya', 'score': 1},
-        {'text': 'Jelas kurang dari biasanya', 'score': 2},
-        {'text': 'Sama sekali tidak bisa', 'score': 3},
-      ],
+      "question": "Saya masih bisa tertawa dan menikmati hal-hal lucu.",
+      "options": [
+        {"text": "Sama seperti biasanya", "score": 0},
+        {"text": "Tidak sesering biasanya", "score": 1},
+        {"text": "Jauh berkurang dari biasanya", "score": 2},
+        {"text": "Sama sekali tidak bisa", "score": 3}
+      ]
     },
     {
-      'question': 'Saya menantikan sesuatu dengan gembira.',
-      'options': [
-        {'text': 'Sebagaimana biasa', 'score': 0},
-        {'text': 'Agak kurang dari biasanya', 'score': 1},
-        {'text': 'Jelas kurang dari biasanya', 'score': 2},
-        {'text': 'Hampir tidak pernah', 'score': 3},
-      ],
+      "question": "Saya bersemangat dalam menantikan atau menjalani sesuatu.",
+      "options": [
+        {"text": "Sama seperti biasanya", "score": 0},
+        {"text": "Sedikit berkurang dari biasanya", "score": 1},
+        {"text": "Jauh berkurang dari biasanya", "score": 2},
+        {"text": "Hampir tidak pernah sama sekali", "score": 3}
+      ]
     },
     {
-      'question':
-          'Saya menyalahkan diri sendiri tanpa alasan bila ada yang tidak berjalan dengan baik.',
-      'options': [
-        {'text': 'Tidak, tidak pernah', 'score': 0},
-        {'text': 'Jarang sekali', 'score': 1},
-        {'text': 'Kadang-kadang', 'score': 2},
-        {'text': 'Ya, hampir selalu', 'score': 3},
-      ],
+      "question":
+          "Ketika ada masalah, saya cenderung menyalahkan diri sendiri secara berlebihan.",
+      "options": [
+        {"text": "Tidak, sama sekali tidak", "score": 0},
+        {"text": "Jarang sekali", "score": 1},
+        {"text": "Ya, kadang-kadang", "score": 2},
+        {"text": "Ya, hampir selalu", "score": 3}
+      ]
     },
     {
-      'question': 'Saya merasa cemas atau khawatir tanpa alasan yang jelas.',
-      'options': [
-        {'text': 'Tidak, tidak pernah', 'score': 0},
-        {'text': 'Jarang', 'score': 1},
-        {'text': 'Kadang-kadang', 'score': 2},
-        {'text': 'Ya, sangat sering', 'score': 3},
-      ],
+      "question": "Saya merasa cemas dan khawatir tanpa sebab yang jelas.",
+      "options": [
+        {"text": "Tidak pernah", "score": 0},
+        {"text": "Hampir tidak pernah", "score": 1},
+        {"text": "Kadang-kadang", "score": 2},
+        {"text": "Ya, sangat sering", "score": 3}
+      ]
     },
     {
-      'question': 'Saya merasa takut atau panik tanpa alasan yang baik.',
-      'options': [
-        {'text': 'Tidak, tidak pernah', 'score': 0},
-        {'text': 'Jarang', 'score': 1},
-        {'text': 'Kadang-kadang', 'score': 2},
-        {'text': 'Ya, sangat sering', 'score': 3},
-      ],
+      "question":
+          "Saya tiba-tiba merasa takut atau panik tanpa alasan yang kuat.",
+      "options": [
+        {"text": "Tidak, sama sekali tidak", "score": 0},
+        {"text": "Tidak terlalu sering", "score": 1},
+        {"text": "Ya, kadang-kadang", "score": 2},
+        {"text": "Ya, cukup sering", "score": 3}
+      ]
     },
     {
-      'question': 'Segalanya terasa menumpuk dan membuat saya kewalahan.',
-      'options': [
-        {'text': 'Tidak, saya dapat mengatasi seperti biasa', 'score': 0},
+      "question":
+          "Akhir-akhir ini, saya merasa semua hal menumpuk dan membuat saya kewalahan.",
+      "options": [
         {
-          'text': 'Ya, sebagian besar waktu saya dapat mengatasi dengan baik',
-          'score': 1
+          "text": "Tidak, saya bisa mengatasi semuanya sebaik biasanya.",
+          "score": 0
         },
         {
-          'text': 'Tidak, saya kesulitan mengatasi seperti biasanya',
-          'score': 2
+          "text": "Seringnya saya masih bisa mengatasi dengan cukup baik.",
+          "score": 1
         },
-        {'text': 'Tidak, saya tidak bisa mengatasinya sama sekali', 'score': 3},
-      ],
+        {
+          "text": "Kadang saya kesulitan mengatasinya seperti biasa.",
+          "score": 2
+        },
+        {"text": "Tidak, saya sama sekali tidak bisa mengatasinya.", "score": 3}
+      ]
     },
     {
-      'question': 'Saya merasa tidak bahagia hingga sulit tidur.',
-      'options': [
-        {'text': 'Tidak, tidak pernah', 'score': 0},
-        {'text': 'Jarang', 'score': 1},
-        {'text': 'Cukup sering', 'score': 2},
-        {'text': 'Hampir sepanjang waktu', 'score': 3},
-      ],
+      "question": "Perasaan sedih atau tidak bahagia membuat saya sulit tidur.",
+      "options": [
+        {"text": "Tidak, sama sekali tidak", "score": 0},
+        {"text": "Jarang sekali", "score": 1},
+        {"text": "Ya, cukup sering", "score": 2},
+        {"text": "Ya, hampir setiap saat", "score": 3}
+      ]
     },
     {
-      'question': 'Saya merasa sedih atau putus asa.',
-      'options': [
-        {'text': 'Tidak, tidak pernah', 'score': 0},
-        {'text': 'Jarang', 'score': 1},
-        {'text': 'Cukup sering', 'score': 2},
-        {'text': 'Hampir sepanjang waktu', 'score': 3},
-      ],
+      "question": "Saya merasa sedih atau murung.",
+      "options": [
+        {"text": "Tidak, sama sekali tidak", "score": 0},
+        {"text": "Jarang sekali", "score": 1},
+        {"text": "Ya, cukup sering", "score": 2},
+        {"text": "Ya, hampir setiap saat", "score": 3}
+      ]
     },
     {
-      'question': 'Saya merasa tidak berharga sebagai ibu.',
-      'options': [
-        {'text': 'Tidak, tidak pernah', 'score': 0},
-        {'text': 'Jarang', 'score': 1},
-        {'text': 'Cukup sering', 'score': 2},
-        {'text': 'Hampir sepanjang waktu', 'score': 3},
-      ],
+      "question": "Saya merasa telah menjadi ibu yang gagal.",
+      "options": [
+        {"text": "Tidak, sama sekali tidak", "score": 0},
+        {"text": "Jarang-jarang", "score": 1},
+        {"text": "Ya, kadang-kadang", "score": 2},
+        {"text": "Ya, hampir sepanjang waktu", "score": 3}
+      ]
     },
     {
-      'question':
-          'Pikiran untuk menyakiti diri sendiri pernah terlintas di benak saya.',
-      'options': [
-        {'text': 'Tidak pernah', 'score': 0},
-        {'text': 'Hampir tidak pernah', 'score': 1},
-        {'text': 'Kadang-kadang', 'score': 2},
-        {'text': 'Cukup sering', 'score': 3},
-      ],
-    },
+      "question":
+          "Pernah terlintas di pikiran saya untuk menyakiti diri sendiri.",
+      "options": [
+        {"text": "Sama sekali tidak pernah", "score": 0},
+        {"text": "Hampir tidak pernah", "score": 1},
+        {"text": "Kadang-kadang terpikir", "score": 2},
+        {"text": "Ya, cukup sering", "score": 3}
+      ]
+    }
   ];
-  
+
   RxList<int> answers = List.generate(10, (_) => -1).obs;
   RxBool isSubmitted = false.obs;
   bool get allAnswered => !answers.contains(-1);
@@ -136,7 +141,9 @@ class MoodCheckController extends GetxController {
     pageController = PageController(initialPage: 0);
 
     pageController?.addListener(() {
-      if (!isPageControllerActive || pageController == null || !pageController!.hasClients) return;
+      if (!isPageControllerActive ||
+          pageController == null ||
+          !pageController!.hasClients) return;
       final newPage = pageController!.page!.round();
       if (currentPage.value != newPage) {
         currentPage.value = newPage;
@@ -172,7 +179,8 @@ class MoodCheckController extends GetxController {
 
   void _startAutoAdvance(int pageIndex) {
     _timer?.cancel();
-    if (!isPageControllerActive) return; // Cek saklar sebelum membuat timer baru
+    if (!isPageControllerActive)
+      return; // Cek saklar sebelum membuat timer baru
     if (pageIndex < 2) {
       _timer = Timer(4.seconds, () {
         if (!isPageControllerActive || pageController == null) return;
@@ -185,11 +193,13 @@ class MoodCheckController extends GetxController {
 
   void nextPage() {
     // Guard Clause yang lebih ketat
-    if (!isPageControllerActive || pageController == null || !pageController!.hasClients) return;
+    if (!isPageControllerActive ||
+        pageController == null ||
+        !pageController!.hasClients) return;
 
     if (currentPage.value < 2) {
-      pageController!.nextPage(
-          duration: 300.milliseconds, curve: Curves.easeInOut);
+      pageController!
+          .nextPage(duration: 300.milliseconds, curve: Curves.easeInOut);
     } else {
       Get.toNamed('/epds-test');
     }
@@ -197,7 +207,9 @@ class MoodCheckController extends GetxController {
 
   void previousPage() {
     // Guard Clause yang lebih ketat
-    if (!isPageControllerActive || pageController == null || !pageController!.hasClients) return;
+    if (!isPageControllerActive ||
+        pageController == null ||
+        !pageController!.hasClients) return;
 
     if (currentPage.value > 0) {
       pageController!.previousPage(
@@ -208,7 +220,7 @@ class MoodCheckController extends GetxController {
       Get.back();
     }
   }
-  
+
   void onPageChanged(int index) {
     if (!isPageControllerActive) return;
     currentPage.value = index;
@@ -247,7 +259,8 @@ class MoodCheckController extends GetxController {
   Future<void> submitAnswers() async {
     int total = 0;
     for (int i = 0; i < epdsQuestions.length; i++) {
-      final score = (epdsQuestions[i]['options'] as List)[answers[i]]['score'] as int;
+      final score =
+          (epdsQuestions[i]['options'] as List)[answers[i]]['score'] as int;
       total += score;
     }
     epdsScore.value = total;

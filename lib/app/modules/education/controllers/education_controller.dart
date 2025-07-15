@@ -41,7 +41,7 @@ Kesehatan Bunda adalah prioritas. Segera hubungi dokter atau UGD jika mengalami 
     - Nyeri atau bengkak pada salah satu kaki.
     - Perasaan sedih yang luar biasa, keinginan menyakiti diri sendiri atau bayi.
       ''',
-      'image': 'assets/images/pilihprogram.png',
+      'image': 'assets/images/1.png',
     },
     {
       'title': 'Nutrisi Pasca Melahirkan',
@@ -69,7 +69,7 @@ Banyak makanan dipercaya dapat membantu kelancaran produksi ASI. Cobalah masukka
 
 Ingat, prinsip utama produksi ASI adalah supply and demand (makin sering disusui, makin banyak produksi).
       ''',
-      'image': 'assets/images/pilihprogram.png',
+      'image': 'assets/images/2.png',
     },
     {
       'title': 'Kesehatan Mental & Emosional',
@@ -93,7 +93,7 @@ Penting untuk mengenali apa yang Bunda rasakan.
     - Sinar Matahari: Usahakan keluar rumah sebentar di pagi hari. Sinar matahari bisa membantu memperbaiki mood.
     - Turunkan Ekspektasi: Rumah tidak harus selalu rapi. cucian bisa menunggu. Fokus pada Bunda dan bayi.
       ''',
-      'image': 'assets/images/pilihprogram.png',
+      'image': 'assets/images/3.png',
     },
     {
       'title': 'Dasar-Dasar Menyusui',
@@ -118,7 +118,7 @@ Ini adalah kekhawatiran terbesar banyak ibu baru. Lihat tanda-tanda ini pada bay
     - Puting Lecet: Biasanya disebabkan oleh pelekatan yang kurang pas. Coba perbaiki posisi dan pelekatan. Oleskan sedikit ASI pada puting dan biarkan mengering.
     - Payudara Bengkak: Susui bayi sesering mungkin. Jika perlu, kompres hangat sebelum menyusui dan kompres dingin setelahnya untuk mengurangi nyeri.      
       ''',
-      'image': 'assets/images/pilihprogram.png',
+      'image': 'assets/images/4.png',
     },
     {
       'title': 'Merawat Diri Sendiri',
@@ -142,7 +142,7 @@ Bonding adalah tentang kualitas, bukan kuantitas.
     - Bicara dan Bernyanyi: Bayi sangat suka mendengar suara Bunda.
     - Pijat Bayi: Sentuhan lembut adalah bahasa cinta yang dimengerti bayi.
       ''',
-      'image': 'assets/images/pilihprogram.png',
+      'image': 'assets/images/5.png',
     },
   ];
 

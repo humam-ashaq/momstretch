@@ -112,19 +112,19 @@ class LoginView extends GetView<LoginController> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      TextButton(
-                        onPressed: () {
-                          Get.toNamed('/forgot-password');
-                        },
-                        child: Text(
-                          'Lupa Kata Sandi?',
-                          style: TextStyle(
-                              fontSize: 12,
-                              color: mainColor,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      Text(' - '),
+                      // TextButton(
+                      //   onPressed: () {
+                      //     Get.toNamed('/forgot-password');
+                      //   },
+                      //   child: Text(
+                      //     'Lupa Kata Sandi?',
+                      //     style: TextStyle(
+                      //         fontSize: 12,
+                      //         color: mainColor,
+                      //         fontWeight: FontWeight.bold),
+                      //   ),
+                      // ),
+                      // Text(' - '),
                       TextButton(
                         onPressed: () {
                           Get.toNamed('/register');
